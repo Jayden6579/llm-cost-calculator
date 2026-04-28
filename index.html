@@ -120,9 +120,9 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
       <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--b1);flex-shrink:0">
         <span style="font-size:11px;color:var(--t3);font-weight:600">版本：</span>
         <div class="tog" id="VT" style="padding:2px;gap:1px">
-          <button class="on" onclick="setVer('全部')">全部</button>
-          <button onclick="setVer('国内')">🇨🇳 国内</button>
-          <button onclick="setVer('国际')">🌐 国际</button>
+          <button onclick="setVer('全部')">全部</button>
+          <button class="on" onclick="setVer('国内版')">🇨🇳 国内</button>
+          <button onclick="setVer('国际版')">🌐 国际</button>
         </div>
         <span id="MC" style="margin-left:auto;font-size:10px;color:var(--t3)"></span>
       </div>
@@ -187,7 +187,7 @@ const PAL={
   Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"},
   DeepSeek:{a:"#7c6cf8",bg:"rgba(124,108,248,.08)",ch:"rgba(124,108,248,.16)"},
   Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},
-  Moonshot:{a:"#e879b3",bg:"rgba(232,121,179,.08)",ch:"rgba(232,121,179,.16)"},
+  "月之暗面":{a:"#ff6b9d",bg:"rgba(255,107,157,.08)",ch:"rgba(255,107,157,.16)"},
   "智谱AI":{a:"#06b6d4",bg:"rgba(6,182,212,.08)",ch:"rgba(6,182,212,.16)"},
   Minimax:{a:"#f97316",bg:"rgba(249,115,22,.08)",ch:"rgba(249,115,22,.16)"},
   Xiaomi:{a:"#ff4a00",bg:"rgba(255,74,0,.08)",ch:"rgba(255,74,0,.16)"},
@@ -195,98 +195,106 @@ const PAL={
 };
 const pv=p=>PAL[p]||{a:"#888",bg:"rgba(136,136,136,.08)",ch:"rgba(136,136,136,.16)"};
 const M=[
-  // ===== OpenAI =====
-  {id:"mog-1",n:"gpt-5",p:"OpenAI",i:1.25,o:10,c:"USD",ver:"国内"},
-  {id:"mog-1g",n:"gpt-5 (Global)",p:"OpenAI",i:1.25,o:10,c:"USD",ver:"国际"},
-  {id:"mog-2",n:"gpt-5.2",p:"OpenAI",i:1.75,o:14,c:"USD",ver:"国内"},
-  {id:"mog-2g",n:"gpt-5.2 (Global)",p:"OpenAI",i:1.75,o:14,c:"USD",ver:"国际"},
-  {id:"mog-3",n:"gpt-5.4",p:"OpenAI",i:2.5,o:15,c:"USD",ctx:272e3,ver:"国内"},
-  {id:"mog-3g",n:"gpt-5.4 (Global)",p:"OpenAI",i:2.5,o:15,c:"USD",ctx:272e3,ver:"国际"},
-  {id:"mog-4",n:"gpt-5.4-pro",p:"OpenAI",i:30,o:180,c:"USD",ctx:272e3,ver:"国内"},
-  {id:"mog-4g",n:"gpt-5.4-pro (Global)",p:"OpenAI",i:30,o:180,c:"USD",ctx:272e3,ver:"国际"},
-  {id:"mog-5",n:"gpt-5.3-codex",p:"OpenAI",i:1.75,o:14,c:"USD",ver:"国内"},
-  {id:"gpt-oss",n:"GPT OSS 120B",p:"OpenAI",i:1,o:5,c:"CNY",ver:"国内"},
-  // ===== Anthropic =====
-  {id:"mcs-5",n:"claude-sonnet-4.6",p:"Anthropic",i:3,o:15,c:"USD",ver:"国内"},
-  {id:"mcs-5g",n:"claude-sonnet-4.6 (Global)",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际"},
-  {id:"mcs-4",n:"claude-sonnet-4",p:"Anthropic",i:3,o:15,c:"USD",ver:"国内"},
-  {id:"mcs-4g",n:"claude-sonnet-4 (Global)",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际"},
-  {id:"mcs-1",n:"claude-sonnet-4.5",p:"Anthropic",i:3,o:15,c:"USD",ver:"国内"},
-  {id:"mcs-1g",n:"claude-sonnet-4.5 (Global)",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际"},
-  {id:"mch-1",n:"claude-haiku-4.5",p:"Anthropic",i:1,o:5,c:"USD",ver:"国内"},
-  {id:"mch-1g",n:"claude-haiku-4.5 (Global)",p:"Anthropic",i:1,o:5,c:"USD",ver:"国际"},
-  {id:"mco-1",n:"claude-opus-4.5",p:"Anthropic",i:5,o:25,c:"USD",ver:"国内"},
-  {id:"mco-1g",n:"claude-opus-4.5 (Global)",p:"Anthropic",i:5,o:25,c:"USD",ver:"国际"},
-  {id:"mco-2",n:"claude-opus-4",p:"Anthropic",i:15,o:75,c:"USD",ver:"国内"},
-  {id:"mco-2g",n:"claude-opus-4 (Global)",p:"Anthropic",i:15,o:75,c:"USD",ver:"国际"},
-  {id:"mco-3",n:"claude-opus-4.1",p:"Anthropic",i:15,o:75,c:"USD",ver:"国内"},
-  {id:"mco-3g",n:"claude-opus-4.1 (Global)",p:"Anthropic",i:15,o:75,c:"USD",ver:"国际"},
-  {id:"mco-4",n:"claude-opus-4-6",p:"Anthropic",i:5,o:25,c:"USD",ver:"国内"},
-  {id:"mco-4g",n:"claude-opus-4-6 (Global)",p:"Anthropic",i:5,o:25,c:"USD",ver:"国际"},
-  {id:"mco-5",n:"claude-opus-4.7",p:"Anthropic",i:5,o:25,c:"USD",ver:"国内"},
-  {id:"mco-5g",n:"claude-opus-4.7 (Global)",p:"Anthropic",i:5,o:25,c:"USD",ver:"国际"},
-  // ===== Google =====
-  {id:"mgg-1",n:"gemini-2.5-pro",p:"Google",i:1.25,o:10,c:"USD",ctx:2e5,ver:"国内"},
-  {id:"mgg-1g",n:"gemini-2.5-pro (Global)",p:"Google",i:1.25,o:10,c:"USD",ctx:2e5,ver:"国际"},
-  {id:"mgg-4",n:"gemini-2.5-flash",p:"Google",i:0.3,o:2.5,c:"USD",ver:"国内"},
-  {id:"mgg-4g",n:"gemini-2.5-flash (Global)",p:"Google",i:0.3,o:2.5,c:"USD",ver:"国际"},
-  {id:"mgg-7",n:"gemini-3-flash",p:"Google",i:0.5,o:3,c:"USD",ver:"国内"},
-  {id:"mgg-7g",n:"gemini-3-flash (Global)",p:"Google",i:0.5,o:3,c:"USD",ver:"国际"},
-  {id:"mgg-8",n:"gemini-3.1-pro",p:"Google",i:2,o:12,c:"USD",ctx:2e5,ver:"国内"},
-  {id:"mgg-8g",n:"gemini-3.1-pro (Global)",p:"Google",i:2,o:12,c:"USD",ctx:2e5,ver:"国际"},
-  {id:"mgg-10",n:"gemini-3.1-flash-lite",p:"Google",i:0.25,o:1.5,c:"USD",ver:"国内"},
-  // ===== DeepSeek =====
-  {id:"ds-v32",n:"DeepSeek V3.2",p:"DeepSeek",i:2,o:3,c:"CNY",ver:"国内"},
-  {id:"ds-v32g",n:"DeepSeek V3.2 (Global)",p:"DeepSeek",i:1.9,o:2.8,c:"CNY",ver:"国际"},
-  {id:"ds-v3324",n:"DeepSeek V3-0324",p:"DeepSeek",i:2,o:8,c:"CNY",ver:"国内"},
-  {id:"ds-v31",n:"DeepSeek V3.1",p:"DeepSeek",i:4,o:12,c:"CNY",ver:"国内"},
-  {id:"ds-v31k",n:"DeepSeek V3.1 (KSC)",p:"DeepSeek",i:4,o:12,c:"CNY",ver:"国内"},
-  {id:"ds-r1",n:"DeepSeek R1-0528",p:"DeepSeek",i:4,o:16,c:"CNY",ver:"国内"},
-  {id:"ds-v4f",n:"DeepSeek V4 Flash",p:"DeepSeek",i:1,o:2,c:"CNY",ver:"国内"},
-  {id:"ds-v4p",n:"DeepSeek V4 Pro",p:"DeepSeek",i:12,o:24,c:"CNY",ver:"国内"},
-  // ===== Qwen =====
-  {id:"qw3-max",n:"Qwen3 Max",p:"Qwen",i:2.5,o:10,c:"CNY",ctx:32e3,ver:"国内"},
-  {id:"qw-plus",n:"Qwen Plus",p:"Qwen",i:0.8,o:2,c:"CNY",ver:"国内"},
-  {id:"qw-flash",n:"Qwen Flash",p:"Qwen",i:0.15,o:1.5,c:"CNY",ver:"国内"},
-  {id:"qw35f",n:"Qwen3.5 Flash",p:"Qwen",i:0.2,o:0.8,c:"CNY",ver:"国内"},
-  {id:"qw3-235",n:"Qwen3 235B",p:"Qwen",i:2,o:8,c:"CNY",ver:"国内"},
-  {id:"qw3-235t",n:"Qwen3 235B Thinking",p:"Qwen",i:2,o:20,c:"CNY",ver:"国内"},
-  {id:"qw3-30b",n:"Qwen3 30B-A3B",p:"Qwen",i:0.75,o:3,c:"CNY",ver:"国内"},
-  {id:"qw35-35b",n:"Qwen3.5 35B-A3B",p:"Qwen",i:0.4,o:3.2,c:"CNY",ver:"国内"},
-  {id:"qw35-397b",n:"Qwen3.5 397B",p:"Qwen",i:1.2,o:7.2,c:"CNY",ver:"国内"},
-  {id:"qw3-coder480b",n:"Qwen3 Coder 480B",p:"Qwen",i:6,o:24,c:"CNY",ver:"国内"},
-  {id:"qw3-coderplus",n:"Qwen3 Coder Plus",p:"Qwen",i:4,o:16,c:"CNY",ver:"国内"},
-  // ===== Moonshot =====
-  {id:"kimi-k25",n:"Kimi K2.5",p:"Moonshot",i:4,o:21,c:"CNY",ver:"国内"},
-  {id:"kimi-k26",n:"Kimi K2.6",p:"Moonshot",i:6.5,o:27,c:"CNY",ver:"国内"},
-  {id:"kimi-k2t",n:"Kimi K2 Thinking",p:"Moonshot",i:4,o:16,c:"CNY",ver:"国内"},
-  {id:"kimi-k2tg",n:"Kimi K2 Thinking (Global)",p:"Moonshot",i:4,o:16.75,c:"CNY",ver:"国际"},
-  {id:"kimi-k2tu",n:"Kimi K2 Turbo",p:"Moonshot",i:8,o:58,c:"CNY",ver:"国内"},
-  {id:"kimi-k2te",n:"Kimi K2 Turbo Enterprise",p:"Moonshot",i:12,o:87,c:"CNY",ver:"国内"},
-  {id:"kimi-k2tt",n:"Kimi K2 Thinking Turbo",p:"Moonshot",i:8,o:58,c:"CNY",ver:"国内"},
-  {id:"kimi-k2k",n:"Kimi K2 (KSC)",p:"Moonshot",i:4,o:16,c:"CNY",ver:"国内"},
-  // ===== 智谱AI =====
-  {id:"glm-5",n:"GLM-5",p:"智谱AI",i:4,o:18,c:"CNY",ctx:32e3,ver:"国内"},
-  {id:"glm-46",n:"GLM-4.6",p:"智谱AI",i:3,o:14,c:"CNY",ctx:32e3,ver:"国内"},
-  {id:"glm-47",n:"GLM-4.7",p:"智谱AI",i:3,o:14,c:"CNY",ctx:32e3,ver:"国内"},
-  {id:"glm-51",n:"GLM-5.1",p:"智谱AI",i:6,o:24,c:"CNY",ctx:32e3,ver:"国内"},
-  // ===== Minimax =====
-  {id:"mm-m27",n:"MiniMax M2.7",p:"Minimax",i:2.1,o:8.4,c:"CNY",ver:"国内"},
-  {id:"mm-m27g",n:"MiniMax M2.7 (Global)",p:"Minimax",i:2.1,o:8.4,c:"CNY",ver:"国际"},
-  {id:"mm-m25",n:"MiniMax M2.5",p:"Minimax",i:2.1,o:8.4,c:"CNY",ver:"国内"},
-  // ===== Xiaomi =====
-  {id:"mimo-v2p",n:"MIMO V2 Pro",p:"Xiaomi",i:7,o:21,c:"CNY",ctx:256e3,ver:"国内"},
-  {id:"mimo-v2f",n:"MIMO V2 Flash",p:"Xiaomi",i:0.7,o:2.1,c:"CNY",ver:"国内"},
-  {id:"mimo-v2o",n:"MIMO V2 Omni",p:"Xiaomi",i:2.8,o:14,c:"CNY",ver:"国内"},
-  {id:"mimo-v25",n:"MIMO V2.5",p:"Xiaomi",i:2.8,o:14,c:"CNY",ctx:256e3,ver:"国内"},
-  {id:"mimo-v25p",n:"MIMO V2.5 Pro",p:"Xiaomi",i:7,o:21,c:"CNY",ctx:256e3,ver:"国内"},
-  // ===== 腾讯 =====
-  {id:"hunyuan-t1v",n:"混元 T1 Vision",p:"腾讯",i:3,o:9,c:"CNY",ver:"国内"},
-  {id:"hunyuan-v15",n:"混元 Vision 1.5",p:"腾讯",i:3,o:9,c:"CNY",ver:"国内"},
+  // ===== 国内版 =====
+  // OpenAI
+  {id:"mog-1",n:"gpt-5",p:"OpenAI",i:1.25,o:10,c:"USD",ver:"国内版"},
+  {id:"mog-2",n:"gpt-5.2",p:"OpenAI",i:1.75,o:14,c:"USD",ver:"国内版"},
+  {id:"mog-3",n:"gpt-5.4",p:"OpenAI",i:2.5,o:15,c:"USD",ver:"国内版"},
+  {id:"mog-4",n:"gpt-5.4-pro",p:"OpenAI",i:30,o:180,c:"USD",ver:"国内版"},
+  {id:"mog-5",n:"gpt-5.3-codex",p:"OpenAI",i:1.75,o:14,c:"USD",ver:"国内版"},
+  {id:"gpt-oss-120b",n:"GPT OSS 120B",p:"OpenAI",i:1,o:5,c:"CNY",ver:"国内版"},
+  // Anthropic
+  {id:"mcs-1",n:"claude-sonnet-4.5",p:"Anthropic",i:3,o:15,c:"USD",ver:"国内版"},
+  {id:"mcs-4",n:"claude-sonnet-4",p:"Anthropic",i:3,o:15,c:"USD",ver:"国内版"},
+  {id:"mcs-5",n:"claude-sonnet-4.6",p:"Anthropic",i:3,o:15,c:"USD",ver:"国内版"},
+  {id:"mch-1",n:"claude-haiku-4.5",p:"Anthropic",i:1,o:5,c:"USD",ver:"国内版"},
+  {id:"mco-1",n:"claude-opus-4.5",p:"Anthropic",i:5,o:25,c:"USD",ver:"国内版"},
+  {id:"mco-2",n:"claude-opus-4",p:"Anthropic",i:15,o:75,c:"USD",ver:"国内版"},
+  {id:"mco-3",n:"claude-opus-4.1",p:"Anthropic",i:15,o:75,c:"USD",ver:"国内版"},
+  {id:"mco-4",n:"claude-opus-4-6",p:"Anthropic",i:5,o:25,c:"USD",ver:"国内版"},
+  {id:"mco-5",n:"claude-opus-4.7",p:"Anthropic",i:5,o:25,c:"USD",ver:"国内版"},
+  // Google
+  {id:"mgg-1",n:"gemini-2.5-pro",p:"Google",i:1.25,o:10,c:"USD",ver:"国内版"},
+  {id:"mgg-4",n:"gemini-2.5-flash",p:"Google",i:0.3,o:2.5,c:"USD",ver:"国内版"},
+  {id:"mgg-7",n:"gemini-3-flash-preview",p:"Google",i:0.5,o:3,c:"USD",ver:"国内版"},
+  {id:"mgg-8",n:"gemini-3.1-pro-preview",p:"Google",i:2,o:12,c:"USD",ver:"国内版"},
+  {id:"mgg-10",n:"gemini-3.1-flash-lite-preview",p:"Google",i:0.25,o:1.5,c:"USD",ver:"国内版"},
+  // DeepSeek
+  {id:"deepseek-v3.2",n:"deepseek-v3.2",p:"DeepSeek",i:2,o:3,c:"CNY",ver:"国内版"},
+  {id:"deepseek-v3.2-speciale",n:"deepseek-v3.2-speciale",p:"DeepSeek",i:2,o:3,c:"CNY",ver:"国内版"},
+  {id:"deepseek-v3.1-250821",n:"deepseek-v3.1-250821",p:"DeepSeek",i:4,o:12,c:"CNY",ver:"国内版"},
+  {id:"deepseek-V3.1",n:"deepseek-V3.1",p:"DeepSeek",i:4,o:12,c:"CNY",ver:"国内版"},
+  {id:"deepseek-v3-0324",n:"deepseek-v3-0324",p:"DeepSeek",i:2,o:8,c:"CNY",ver:"国内版"},
+  {id:"deepseek-v3-0324-wps",n:"DeepSeek V3-0324 (WPS)",p:"DeepSeek",i:2,o:8,c:"CNY",ver:"国内版"},
+  {id:"deepseek-v3.1-ksyun",n:"DeepSeek V3.1 (KSC)",p:"DeepSeek",i:4,o:12,c:"CNY",ver:"国内版"},
+  {id:"deepseek-r1-0528",n:"deepseek-r1-0528",p:"DeepSeek",i:4,o:16,c:"CNY",ver:"国内版"},
+  {id:"deepseek-v4-flash",n:"deepseek-v4-flash",p:"DeepSeek",i:1,o:2,c:"CNY",ver:"国内版"},
+  {id:"deepseek-v4-pro",n:"deepseek-v4-pro",p:"DeepSeek",i:12,o:24,c:"CNY",ver:"国内版"},
+  // Qwen
+  {id:"qwen-flash",n:"qwen-flash",p:"Qwen",i:0.15,o:1.5,c:"CNY",ver:"国内版"},
+  {id:"qwen-plus",n:"qwen-plus",p:"Qwen",i:0.8,o:2,c:"CNY",ver:"国内版"},
+  {id:"qwen3-30b-a3b-instruct-2507",n:"qwen3-30b-a3b-instruct-2507",p:"Qwen",i:0.75,o:3,c:"CNY",ver:"国内版"},
+  {id:"qwen3-max-2026-01-23",n:"qwen3-max-2026-01-23",p:"Qwen",i:2.5,o:10,c:"CNY",ver:"国内版"},
+  {id:"qwen3-235b-a22b-instruct-2507",n:"qwen3-235b-a22b-instruct-2507",p:"Qwen",i:2,o:8,c:"CNY",ver:"国内版"},
+  {id:"qwen3-235b-a22b-thinking-2507",n:"qwen3-235b-a22b-thinking-2507",p:"Qwen",i:2,o:20,c:"CNY",ver:"国内版"},
+  {id:"qwen3-coder-480b-a35b-instruct",n:"qwen3-coder-480b-a35b-instruct",p:"Qwen",i:6,o:24,c:"CNY",ver:"国内版"},
+  {id:"qwen3.5-35b-a3b",n:"qwen3.5-35b-a3b",p:"Qwen",i:0.4,o:3.2,c:"CNY",ver:"国内版"},
+  {id:"qwen3.5-flash",n:"qwen3.5-flash",p:"Qwen",i:0.2,o:0.8,c:"CNY",ver:"国内版"},
+  {id:"qwen3.5-397b-a17b",n:"qwen3.5-397b-a17b",p:"Qwen",i:1.2,o:7.2,c:"CNY",ver:"国内版"},
+  // 月之暗面
+  {id:"kimi-k2.5",n:"kimi-k2.5",p:"月之暗面",i:4,o:21,c:"CNY",ver:"国内版"},
+  {id:"kimi-k2.6",n:"kimi-k2.6",p:"月之暗面",i:6.5,o:27,c:"CNY",ver:"国内版"},
+  {id:"kimi-k2-thinking",n:"Kimi K2 Thinking",p:"月之暗面",i:4,o:16,c:"CNY",ver:"国内版"},
+  {id:"kimi-k2-thinking-turbo",n:"Kimi K2 Thinking Turbo",p:"月之暗面",i:8,o:58,c:"CNY",ver:"国内版"},
+  {id:"kimi-k2-turbo-preview",n:"Kimi K2 Turbo",p:"月之暗面",i:8,o:58,c:"CNY",ver:"国内版"},
+  {id:"kimi-k2-turbo-enterprise",n:"Kimi K2 Turbo Enterprise",p:"月之暗面",i:12,o:87,c:"CNY",ver:"国内版"},
+  {id:"kimi-k2-ksyun",n:"Kimi K2 (KSC)",p:"月之暗面",i:4,o:16,c:"CNY",ver:"国内版"},
+  // 智谱AI
+  {id:"glm-4.6",n:"glm-4.6",p:"智谱AI",i:3,o:14,c:"CNY",ver:"国内版"},
+  {id:"glm-4.7",n:"glm-4.7",p:"智谱AI",i:3,o:14,c:"CNY",ver:"国内版"},
+  {id:"glm-5",n:"glm-5",p:"智谱AI",i:4,o:18,c:"CNY",ver:"国内版"},
+  {id:"glm-5.1",n:"glm-5.1",p:"智谱AI",i:6,o:24,c:"CNY",ver:"国内版"},
+  // Minimax
+  {id:"minimax-m2.5",n:"minimax-m2.5",p:"Minimax",i:2.1,o:8.4,c:"CNY",ver:"国内版"},
+  {id:"minimax-m2.7",n:"minimax-m2.7",p:"Minimax",i:2.1,o:8.4,c:"CNY",ver:"国内版"},
+  // Xiaomi
+  {id:"mimo-v2-flash",n:"mimo-v2-flash",p:"Xiaomi",i:0.7,o:2.1,c:"CNY",ver:"国内版"},
+  {id:"mimo-v2-omni",n:"mimo-v2-omni",p:"Xiaomi",i:2.8,o:14,c:"CNY",ver:"国内版"},
+  {id:"mimo-v2-pro",n:"mimo-v2-pro",p:"Xiaomi",i:7,o:21,c:"CNY",ver:"国内版"},
+  {id:"mimo-v2.5-pro",n:"mimo-v2.5-pro",p:"Xiaomi",i:7,o:21,c:"CNY",ver:"国内版"},
+  // ===== 国际版 =====
+  // OpenAI
+  {id:"mog-1-global",n:"gpt-5",p:"OpenAI",i:1.25,o:10,c:"USD",ver:"国际版"},
+  {id:"mog-2-global",n:"gpt-5.2",p:"OpenAI",i:1.75,o:14,c:"USD",ver:"国际版"},
+  {id:"mog-3-global",n:"gpt-5.4",p:"OpenAI",i:2.5,o:15,c:"USD",ver:"国际版"},
+  {id:"mog-4-global",n:"gpt-5.4-pro",p:"OpenAI",i:30,o:180,c:"USD",ver:"国际版"},
+  // Anthropic
+  {id:"mcs-1-global",n:"claude-sonnet-4.5",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际版"},
+  {id:"mcs-2-global",n:"claude-sonnet-3.5",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际版"},
+  {id:"mcs-3-global",n:"claude-sonnet-3.7",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际版"},
+  {id:"mcs-4-global",n:"claude-sonnet-4",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际版"},
+  {id:"mcs-5-global",n:"claude-sonnet-4.6",p:"Anthropic",i:3,o:15,c:"USD",ver:"国际版"},
+  {id:"mch-1-global",n:"claude-haiku-4.5",p:"Anthropic",i:1,o:5,c:"USD",ver:"国际版"},
+  {id:"mco-1-global",n:"claude-opus-4.5",p:"Anthropic",i:5,o:25,c:"USD",ver:"国际版"},
+  {id:"mco-2-global",n:"claude-opus-4",p:"Anthropic",i:15,o:25,c:"USD",ver:"国际版"},
+  {id:"mco-3-global",n:"claude-opus-4.1",p:"Anthropic",i:15,o:25,c:"USD",ver:"国际版"},
+  {id:"mco-4-global",n:"claude-opus-4-6",p:"Anthropic",i:5,o:25,c:"USD",ver:"国际版"},
+  {id:"mco-5-global",n:"claude-opus-4.7",p:"Anthropic",i:5,o:25,c:"USD",ver:"国际版"},
+  // Google
+  {id:"mgg-1-global",n:"gemini-2.5-pro",p:"Google",i:1.25,o:10,c:"USD",ver:"国际版"},
+  {id:"mgg-4-global",n:"gemini-2.5-flash",p:"Google",i:0.3,o:2.5,c:"USD",ver:"国际版"},
+  {id:"mgg-7-global",n:"gemini-3-flash-preview",p:"Google",i:0.5,o:3,c:"USD",ver:"国际版"},
+  {id:"mgg-8-global",n:"gemini-3.1-pro-preview",p:"Google",i:2,o:12,c:"USD",ver:"国际版"},
+  // DeepSeek
+  {id:"deepseek-v3.2-global",n:"deepseek-v3.2",p:"DeepSeek",i:0.28,o:0.42,c:"USD",ver:"国际版"},
+  // 月之暗面
+  {id:"kimi-k2-thinking-global",n:"Kimi K2 Thinking",p:"月之暗面",i:0.6,o:2.5,c:"USD",ver:"国际版"},
+  // Minimax
+  {id:"minimax-m2.7-global",n:"minimax-m2.7",p:"Minimax",i:0.3,o:1.2,c:"USD",ver:"国际版"},
 ];
-const TPM={OpenAI:2e6,Anthropic:1e6,Google:4e6,DeepSeek:2e6,Qwen:2e6,Moonshot:1e6,"智谱AI":1e6,Minimax:1e6,Xiaomi:1e6,"腾讯":1e6};
-const RPM={OpenAI:1e4,Anthropic:4e3,Google:1e4,DeepSeek:5e3,Qwen:5e3,Moonshot:3e3,"智谱AI":3e3,Minimax:3e3,Xiaomi:3e3,"腾讯":3e3};
-let S={sel:"mog-1",tok:500000,rat:.7,avg:2000,cur:"USD",fp:"ALL",fv:"全部"};
+const TPM={OpenAI:2e6,Anthropic:1e6,Google:4e6,DeepSeek:2e6,Qwen:2e6,"月之暗面":1e6,"智谱AI":1e6,Minimax:1e6,Xiaomi:1e6,"腾讯":1e6};
+const RPM={OpenAI:1e4,Anthropic:4e3,Google:1e4,DeepSeek:5e3,Qwen:5e3,"月之暗面":3e3,"智谱AI":3e3,Minimax:3e3,Xiaomi:3e3,"腾讯":3e3};
+let S={sel:"mog-1",tok:500000,rat:.7,avg:2000,cur:"USD",fp:"ALL",fv:"国内版"};
 
 const toU=(n,c)=>c==="USD"?n:n/R;
 const toC=(n,c)=>c==="CNY"?n:n*R;
@@ -300,7 +308,7 @@ function calc(tok,rat,m){
   const iu=toU(ri,m.c),ou=toU(ro,m.c),tu=toU(rt,m.c),tc=toC(rt,m.c),sc=DB/tok;
   return{iu,ou,tu,tc,du:tu*sc,dc:tc*sc,mu:tu*sc*30,mc:tc*sc*30};
 }
-const fil=()=>M.filter(m=>(S.fp==="ALL"||m.p===S.fp)&&(S.fv==="全部"||m.ver===S.fv));
+const fil=()=>M.filter(m=>(S.fp==="ALL"||m.p===S.fp)&&(S.fv==="全部"||(S.fv==="国内"&&m.ver==="国内版")||(S.fv==="国际"&&m.ver==="国际版")));
 function hexToRgb(h){try{const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}catch{return"136,136,136";}}
 function rFB(){
   const ps=["ALL",...new Set(M.map(m=>m.p))];
@@ -443,7 +451,7 @@ function selM(id){S.sel=id;render();}
 function setF(k,v){if(k==="p"){S.fp=v;const vis=fil();if(!vis.find(m=>m.id===S.sel))S.sel=vis[0]?.id||M[0].id;}render();}
 function setVer(v){
   S.fv=v;
-  document.querySelectorAll("#VT button").forEach((b,i)=>b.className=["全部","国内","国际"][i]===v?"on":"");
+  document.querySelectorAll("#VT button").forEach((b,i)=>b.className=["全部","国内版","国际版"][i]===v?"on":"");
   const vis=fil();
   if(!vis.find(m=>m.id===S.sel))S.sel=vis[0]?.id||M[0].id;
   render();
