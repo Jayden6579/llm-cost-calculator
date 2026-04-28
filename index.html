@@ -303,11 +303,12 @@ function calc(tok,rat,m){
   return{iu,ou,tu,tc,du:tu*sc,dc:tc*sc,mu:tu*sc*30,mc:tc*sc*30};
 }
 const fil=()=>M.filter(m=>(S.fp==="ALL"||m.p===S.fp)&&(S.fv==="全部"||m.ver===S.fv));
+const fil_ver=()=>M.filter(m=>S.fv==="全部"||m.ver===S.fv);
 function hexToRgb(h){try{const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}catch{return"136,136,136";}}
 function rFB(){
   const ps=["ALL",...new Set(M.map(m=>m.p))];
   document.getElementById("SB").innerHTML=ps.map(p=>{
-    const pal=PAL[p],on=S.fp===p,cnt=p==="ALL"?M.length:M.filter(m=>m.p===p).length;
+    const pal=PAL[p],on=S.fp===p,cnt=p==="ALL"?fil_ver().length:M.filter(m=>m.p===p&&(S.fv==="全部"||m.ver===S.fv)).length;
     const col=pal?pal.a:"#888";
     const style=on&&pal?` style="color:${col};background:rgba(${hexToRgb(col)},.12)"`:on?` style="color:var(--t1)"`:""  ;
     const dot=`<span class="sdot2" style="background:${p==="ALL"?"var(--t3)":col}"></span>`;
