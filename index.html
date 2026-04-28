@@ -86,6 +86,19 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
 .cb{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
 .cup{color:var(--r)}.cdn{color:var(--g)}.ceq{color:var(--t3)}
 .foot{text-align:center;font-size:11px;color:var(--b1);margin-top:24px}
+.sbtn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;border:none;background:transparent;cursor:pointer;color:var(--t3);font-size:12px;font-weight:500;transition:all .15s;text-align:left}
+.sbtn:hover{background:var(--b1);color:var(--t2)}
+.sbtn.on{background:var(--b1);color:var(--t1);font-weight:700}
+.sbtn .sdot2{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sbtn .sct{font-size:10px;opacity:.5;margin-left:auto}
+.mgrid{display:flex;flex-direction:column;gap:3px}
+.mrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.mrow:hover{background:var(--b1);border-color:var(--b2)}
+.mrow.on{border-color:var(--mc);background:var(--mb)}
+.mrow-name{font-size:13px;font-weight:500;flex:1;color:var(--t2)}
+.mrow.on .mrow-name{color:var(--mc);font-weight:700}
+.mrow-price{font-family:var(--mono);font-size:11px;color:var(--t3);text-align:right}
+.mrow-ver{font-size:10px;padding:1px 5px;border-radius:4px;background:var(--b2);color:var(--t3);flex-shrink:0}
 </style>
 </head>
 <body>
@@ -102,9 +115,11 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   </div>
 </nav>
 <div class="pg">
-  <div class="sec"><div class="card">
-    <div class="chips" id="FB"></div>
-    <div id="MG"></div>
+  <div class="sec"><div class="card" style="padding:0;overflow:hidden">
+    <div style="display:flex;height:340px">
+      <div id="SB" style="width:130px;flex-shrink:0;border-right:1px solid var(--b1);overflow-y:auto;padding:8px 0"></div>
+      <div style="flex:1;overflow-y:auto;padding:14px 16px" id="MG"></div>
+    </div>
   </div></div>
   <div id="MB" class="sec"></div>
   <div class="sec"><div class="card">
@@ -275,24 +290,30 @@ function calc(tok,rat,m){
   return{iu,ou,tu,tc,du:tu*sc,dc:tc*sc,mu:tu*sc*30,mc:tc*sc*30};
 }
 const fil=()=>M.filter(m=>(S.fp==="ALL"||m.p===S.fp));
+function hexToRgb(h){try{const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}catch{return"136,136,136";}}
 function rFB(){
   const ps=["ALL",...new Set(M.map(m=>m.p))];
-  document.getElementById("FB").innerHTML=
-    '<span class="fl">\u4f9b\u5e94\u5546\uff1a</span>'+
-    ps.map(p=>{const pal=PAL[p],on=S.fp===p;const s=on&&pal?` style="background:${pal.ch};border-color:${pal.a};color:${pal.a}"`:"";
-      return`<button class="chip${on?" on":""}"${s} onclick="setF('p','${p}')">${p==="ALL"?"\u5168\u90e8":p}</button>`;}).join("")+
-    `<span style="margin-left:auto;font-size:10px;color:var(--t3)">${fil().length}\u4e2a\u6a21\u578b</span>`;
+  document.getElementById("SB").innerHTML=ps.map(p=>{
+    const pal=PAL[p],on=S.fp===p,cnt=p==="ALL"?M.length:M.filter(m=>m.p===p).length;
+    const col=pal?pal.a:"#888";
+    const style=on&&pal?` style="color:${col};background:rgba(${hexToRgb(col)},.12)"`:on?` style="color:var(--t1)"`:""  ;
+    const dot=`<span class="sdot2" style="background:${p==="ALL"?"var(--t3)":col}"></span>`;
+    return`<button class="sbtn${on?" on":""}"${style} onclick="setF('p','${p}')">${dot}${p==="ALL"?"全部":p}<span class="sct">${cnt}</span></button>`;
+  }).join("");
 }
 function rMG(){
-  const list=fil(),ps=[...new Set(list.map(m=>m.p))];
-  document.getElementById("MG").innerHTML=ps.map(prov=>{
-    const grp=list.filter(m=>m.p===prov),pal=PAL[prov]||{a:"#888",ch:"rgba(136,136,136,.16)"};
-    return`<div class="prow"><div class="pname" style="color:${pal.a}">${prov}</div><div class="mcs">${
-      grp.map(m=>{const on=m.id===S.sel;const s=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
-        const tag=m.c==="CNY"?`\u00a5${m.i}/\u00a5${m.o}`:`$${m.i}/$${m.o}`;
-        return`<button class="mc${on?" on":""}"${s} onclick="selM('${m.id}')">${m.n}<span class="px">${tag}</span></button>`;
-      }).join("")}</div></div>`;
-  }).join("");
+  const list=fil();
+  document.getElementById("MG").innerHTML=`<div class="mgrid">`+list.map(m=>{
+    const on=m.id===S.sel,mp=PAL[m.p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    const style=on?` style="--mc:${mp.a};--mb:${mp.ch}"`:""  ;
+    const tag=m.c==="CNY"?`¥${m.i} / ¥${m.o}`:`$${m.i} / $${m.o}`;
+    const ver=m.ver?`<span class="mrow-ver">${m.ver}</span>`:"";
+    return`<div class="mrow${on?" on":""}"${style} onclick="selM('${m.id}')">
+      <span style="width:7px;height:7px;border-radius:50%;background:${mp.a};flex-shrink:0;display:inline-block"></span>
+      <span class="mrow-name">${m.n}</span>${ver}
+      <span class="mrow-price">${tag}<br><span style="color:var(--t3)">/1M</span></span>
+    </div>`;
+  }).join("")+`</div>`;
 }
 function rMB(){
   const m=M.find(x=>x.id===S.sel),pal=PAL[m.p]||{a:"#888",bg:"rgba(136,136,136,.08)",ch:"rgba(136,136,136,.16)"};
