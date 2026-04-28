@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM Cost Calculator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080d;--s1:#0f0f16;--s2:#13131c;--b1:#1a1a26;--b2:#22223a;
+  --t1:#eaf0ff;--t2:#8892b0;--t3:#3d4468;
+  --p:#6c63ff;--g:#1de9b6;--r:#ff5370;--y:#ffc400;
+  --rr:10px;--mono:"JetBrains Mono","Fira Code",ui-monospace,monospace
+}
+body{background:var(--bg);color:var(--t1);font-family:-apple-system,"Inter",sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
+nav{position:sticky;top:0;z-index:200;background:rgba(8,8,13,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);height:50px;display:flex;align-items:center;padding:0 28px;gap:14px}
+.nl{width:30px;height:30px;border-radius:8px;background:linear-gradient(140deg,#6c63ff,#c084fc);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0}
+.nt{font-size:15px;font-weight:700;letter-spacing:-.4px}
+.ns{font-size:11px;color:var(--t3);margin-left:2px}
+.nr{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tog{display:flex;background:var(--s1);border:1px solid var(--b1);border-radius:7px;padding:3px;gap:1px}
+.tog button{border:none;background:transparent;cursor:pointer;padding:4px 13px;border-radius:5px;font-size:12px;font-weight:600;color:var(--t3);transition:all .2s}
+.tog button.on{background:var(--b1);color:var(--t1)}
+.sdot{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--g)}
+.pg{max-width:1140px;margin:0 auto;padding:20px 28px 52px}
+.sec{margin-bottom:13px}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rr);padding:18px}
+.ch{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t3);margin-bottom:13px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:14px}
+.chip{padding:3px 10px;border-radius:20px;border:1px solid transparent;cursor:pointer;font-size:11px;font-weight:500;background:transparent;color:var(--t3);transition:all .15s}
+.chip:hover{color:var(--t2)}.chip.on{background:var(--b1);border-color:var(--b2);color:var(--t1)}
+.sep{width:1px;height:16px;background:var(--b2);margin:0 4px}
+.fl{font-size:10px;color:var(--t3);font-weight:600;letter-spacing:.5px}
+.prow{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px}
+.pname{min-width:70px;font-size:10px;font-weight:700;padding-top:6px;flex-shrink:0;letter-spacing:.4px}
+.mcs{display:flex;flex-wrap:wrap;gap:4px;flex:1}
+.mc{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;cursor:pointer;border:1px solid var(--b1);background:transparent;color:var(--t3);font-size:12px;white-space:nowrap;transition:all .15s}
+.mc:hover{border-color:var(--b2);color:var(--t2)}.mc.on{border-color:var(--mc);background:var(--mb);color:var(--mc)}
+.px{font-size:10px;opacity:.5;font-family:var(--mono)}
+.mb{border-radius:var(--rr);padding:12px 16px;display:flex;align-items:center;gap:12px}
+.mav{width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}
+.mn{font-size:15px;font-weight:700}.mm{font-size:11px;color:var(--t2);margin-top:2px}.mm b{font-weight:700}
+.meq{text-align:right;flex-shrink:0}.meq .el{font-size:10px;color:var(--t3)}.meq .ev{font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:1px}
+.nb{padding:3px 8px;border-radius:5px;font-size:10px;background:var(--b1);color:var(--t3);flex-shrink:0}
+.ph{display:flex;justify-content:space-between;margin-bottom:7px}
+.pl{color:var(--t2);font-size:12px}.pv{font-family:var(--mono);font-weight:700;font-size:13px}
+input[type=range]{width:100%;height:2px;cursor:pointer;background:var(--b2);border-radius:1px;outline:none;border:none;-webkit-appearance:none;appearance:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--tc,var(--p));cursor:pointer;box-shadow:0 0 0 3px rgba(108,99,255,.18)}
+.rl{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px}
+.rvis{display:flex;height:3px;border-radius:2px;overflow:hidden;margin-top:7px}
+.rvi{background:#6c63ff;transition:width .1s}.rvo{flex:1;background:#c084fc}
+.cc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rr);padding:16px;position:relative;overflow:hidden}
+.cc::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--ca,var(--p))}
+.cct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.ccl{font-size:11px;color:var(--t3);font-weight:500}.ccs{font-size:10px;color:var(--b2);margin-top:2px}
+.cci{font-size:17px;line-height:1}
+.ccm{font-family:var(--mono);font-size:22px;font-weight:800;color:var(--t1);letter-spacing:-1px;line-height:1}
+.cca{font-size:11px;color:var(--t3);margin-top:6px;font-family:var(--mono)}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:13px}
+.sb{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:10px 12px}
+.sbl{font-size:10px;color:var(--t3);margin-bottom:4px}.sbv{font-family:var(--mono);font-size:17px;font-weight:700}
+.br_{margin-bottom:9px}.bh{display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:4px}
+.bt{height:3px;background:var(--b2);border-radius:2px;overflow:hidden}.bf{height:100%;border-radius:2px;transition:width .3s}
+.ar{display:flex;align-items:center;gap:9px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px 12px;cursor:pointer;margin-bottom:6px;transition:border-color .15s}
+.ar:hover{border-color:var(--b2)}.aav{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;flex-shrink:0}
+.an{font-size:12px;font-weight:500;color:var(--t2)}.ap{font-size:10px;color:var(--t3)}
+.asv{font-size:13px;font-weight:800;color:var(--g)}.acv{font-size:10px;color:var(--t3);font-family:var(--mono)}
+.tph{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--b2);margin-bottom:8px;padding-top:11px;border-top:1px solid var(--b1);margin-top:13px}
+.tip{display:flex;gap:7px;font-size:12px;color:var(--t3);margin-bottom:5px}.tpa{color:var(--p);flex-shrink:0}
+.tw{border-radius:var(--rr);border:1px solid var(--b1);overflow:hidden}
+.twh{padding:11px 18px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;background:var(--s1)}
+.twt{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}.twi{font-size:11px;color:var(--b2)}
+table{width:100%;border-collapse:collapse;font-size:12px;background:var(--s1)}
+th{padding:8px 14px;text-align:left;font-size:10px;color:var(--b2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--b1);white-space:nowrap}
+th.r{text-align:right}td{padding:10px 14px;border-bottom:1px solid #0c0c16;white-space:nowrap}
+tr:last-child td{border-bottom:none}tr{cursor:pointer;transition:background .1s}
+tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,.07)}
+.tdr{text-align:right}.tdm{display:flex;align-items:center;gap:7px}
+.mdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.nb2{font-size:9px;padding:1px 6px;border-radius:6px;font-weight:700}
+.cb{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.cup{color:var(--r)}.cdn{color:var(--g)}.ceq{color:var(--t3)}
+.foot{text-align:center;font-size:11px;color:var(--b1);margin-top:24px}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nl">$</div>
+  <span class="nt">LLM Cost Calculator</span>
+  <span class="ns">· AI 大模型成本分析</span>
+  <div class="nr">
+    <div class="tog" id="CT">
+      <button class="on" onclick="setC('USD')">$ USD</button>
+      <button onclick="setC('CNY')">¥ CNY</button>
+    </div>
+    <div class="sdot"><div class="dot"></div>2025 Q2</div>
+  </div>
+</nav>
+<div class="pg">
+  <div class="sec"><div class="card">
+    <div class="chips" id="FB"></div>
+    <div id="MG"></div>
+  </div></div>
+  <div id="MB" class="sec"></div>
+  <div class="sec"><div class="card">
+    <div class="ch">请求参数</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px">
+      <div>
+        <div class="ph"><span class="pl">Token 总量</span><span class="pv" id="TD" style="color:#6c63ff">500K</span></div>
+        <input type="range" id="TS" min="1000" max="10000000" step="10000" value="500000" style="--tc:#6c63ff" oninput="upd()">
+        <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>10M</span></div>
+      </div>
+      <div>
+        <div class="ph"><span class="pl">输入 / 输出比例</span><span class="pv" id="RD" style="color:#c084fc">70% / 30%</span></div>
+        <input type="range" id="RS" min="0.1" max="0.9" step="0.05" value="0.7" style="--tc:#c084fc" oninput="upd()">
+        <div class="rvis"><div class="rvi" id="RI" style="width:70%"></div><div class="rvo"></div></div>
+        <div class="rl"><span style="color:#6c63ff">● 输入</span><span style="color:#c084fc">输出 ●</span></div>
+      </div>
+      <div>
+        <div class="ph"><span class="pl">平均 Token / 请求</span><span class="pv" id="AD" style="color:#1de9b6">2K</span></div>
+        <input type="range" id="AS" min="100" max="100000" step="100" value="2000" style="--tc:#1de9b6" oninput="upd()">
+        <div class="rl"><span>100</span><span>10K</span><span>100K</span></div>
+      </div>
+    </div>
+  </div></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px" class="sec" id="CC"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px" class="sec">
+    <div class="card"><div class="ch">⏱ 限流模拟</div><div class="sg" id="SG"></div><div id="BR"></div></div>
+    <div class="card">
+      <div class="ch">💡 成本优化</div>
+      <div id="AR"></div>
+      <div class="tph">通用技巧</div>
+      <div class="tip"><span class="tpa">→</span><span>输出token比输入贵3-5x，精简输出格式可大幅降本</span></div>
+      <div class="tip"><span class="tpa">→</span><span>Prompt Cache命中后成本降低可达90%</span></div>
+      <div class="tip"><span class="tpa">→</span><span>非实时任务用 Batch API，享50%折扣</span></div>
+    </div>
+  </div>
+  <div class="tw sec">
+    <div class="twh"><span class="twt">📋 全模型对比</span><span class="twi">点击行切换</span></div>
+    <table><thead><tr>
+      <th>模型</th><th>供应商</th><th>币种</th>
+      <th class="r">输入/1M</th><th class="r">输出/1M</th>
+      <th class="r">单次成本</th><th class="r">月成本</th><th class="r">vs当前</th>
+    </tr></thead><tbody id="TB"></tbody></table>
+  </div>
+  <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
+</div>
+<script>
+const R=7.25,DB=1e10;
+const PAL={
+  OpenAI:{a:"#10a37f",bg:"rgba(16,163,127,.08)",ch:"rgba(16,163,127,.16)"},
+  Anthropic:{a:"#e07b39",bg:"rgba(224,123,57,.08)",ch:"rgba(224,123,57,.16)"},
+  Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"},
+  DeepSeek:{a:"#7c6cf8",bg:"rgba(124,108,248,.08)",ch:"rgba(124,108,248,.16)"},
+  Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},
+  Moonshot:{a:"#e879b3",bg:"rgba(232,121,179,.08)",ch:"rgba(232,121,179,.16)"},
+  "智谱AI":{a:"#06b6d4",bg:"rgba(6,182,212,.08)",ch:"rgba(6,182,212,.16)"},
+  Minimax:{a:"#f97316",bg:"rgba(249,115,22,.08)",ch:"rgba(249,115,22,.16)"},
+  Xiaomi:{a:"#ff4a00",bg:"rgba(255,74,0,.08)",ch:"rgba(255,74,0,.16)"},
+};
+const pv=p=>PAL[p]||{a:"#888",bg:"rgba(136,136,136,.08)",ch:"rgba(136,136,136,.16)"};
+const M=[
+  {id:"mog-1",n:"gpt-5",p:"OpenAI",i:1.25,o:10,c:"USD",ctx:1e6},
+  {id:"mog-2",n:"gpt-5.2",p:"OpenAI",i:1.75,o:14,c:"USD",ctx:1e6},
+  {id:"mog-3",n:"gpt-5.4",p:"OpenAI",i:2.5,o:15,c:"USD",ctx:272e3},
+  {id:"mog-4",n:"gpt-5.4-pro",p:"OpenAI",i:30,o:180,c:"USD",ctx:272e3},
+  {id:"mog-5",n:"gpt-5.3-codex",p:"OpenAI",i:1.75,o:14,c:"USD"},
+  {id:"gpt-oss",n:"GPT OSS 120B",p:"OpenAI",i:1,o:5,c:"CNY"},
+  {id:"mcs-5",n:"claude-sonnet-4.6",p:"Anthropic",i:3,o:15,c:"USD"},
+  {id:"mcs-4",n:"claude-sonnet-4",p:"Anthropic",i:3,o:15,c:"USD"},
+  {id:"mch-1",n:"claude-haiku-4.5",p:"Anthropic",i:1,o:5,c:"USD"},
+  {id:"mco-1",n:"claude-opus-4.5",p:"Anthropic",i:5,o:25,c:"USD"},
+  {id:"mco-2",n:"claude-opus-4",p:"Anthropic",i:15,o:75,c:"USD"},
+  {id:"mgg-1",n:"gemini-2.5-pro",p:"Google",i:1.25,o:10,c:"USD",ctx:2e5},
+  {id:"mgg-4",n:"gemini-2.5-flash",p:"Google",i:0.3,o:2.5,c:"USD"},
+  {id:"mgg-7",n:"gemini-3-flash",p:"Google",i:0.5,o:3,c:"USD"},
+  {id:"mgg-8",n:"gemini-3.1-pro",p:"Google",i:2,o:12,c:"USD",ctx:2e5},
+  {id:"mgg-10",n:"gemini-3.1-flash-lite",p:"Google",i:0.25,o:1.5,c:"USD"},
+  {id:"ds-v32",n:"DeepSeek V3.2",p:"DeepSeek",i:2,o:3,c:"CNY"},
+  {id:"ds-v3324",n:"DeepSeek V3-0324",p:"DeepSeek",i:2,o:8,c:"CNY"},
+  {id:"ds-r1",n:"DeepSeek R1-0528",p:"DeepSeek",i:4,o:16,c:"CNY"},
+  {id:"ds-v4f",n:"DeepSeek V4 Flash",p:"DeepSeek",i:1,o:2,c:"CNY"},
+  {id:"ds-v4p",n:"DeepSeek V4 Pro",p:"DeepSeek",i:12,o:24,c:"CNY"},
+  {id:"qw3-max",n:"Qwen3 Max",p:"Qwen",i:2.5,o:10,c:"CNY",ctx:32e3},
+  {id:"qw-plus",n:"Qwen Plus",p:"Qwen",i:0.8,o:2,c:"CNY"},
+  {id:"qw-flash",n:"Qwen Flash",p:"Qwen",i:0.15,o:1.5,c:"CNY"},
+  {id:"qw35f",n:"Qwen3.5 Flash",p:"Qwen",i:0.2,o:0.8,c:"CNY"},
+  {id:"qw3-235",n:"Qwen3 235B",p:"Qwen",i:2,o:8,c:"CNY"},
+  {id:"kimi-k25",n:"Kimi K2.5",p:"Moonshot",i:4,o:21,c:"CNY"},
+  {id:"kimi-k26",n:"Kimi K2.6",p:"Moonshot",i:6.5,o:27,c:"CNY"},
+  {id:"kimi-k2t",n:"Kimi K2 Thinking",p:"Moonshot",i:4,o:16,c:"CNY"},
+  {id:"kimi-k2tu",n:"Kimi K2 Turbo",p:"Moonshot",i:8,o:58,c:"CNY"},
+  {id:"glm-5",n:"GLM-5",p:"智谱AI",i:4,o:18,c:"CNY",ctx:32e3},
+  {id:"glm-47",n:"GLM-4.7",p:"智谱AI",i:3,o:14,c:"CNY",ctx:32e3},
+  {id:"glm-51",n:"GLM-5.1",p:"智谱AI",i:6,o:24,c:"CNY",ctx:32e3},
+  {id:"mm-m27",n:"MiniMax M2.7",p:"Minimax",i:2.1,o:8.4,c:"CNY"},
+  {id:"mm-m25",n:"MiniMax M2.5",p:"Minimax",i:2.1,o:8.4,c:"CNY"},
+  {id:"mimo-v2p",n:"MIMO V2 Pro",p:"Xiaomi",i:7,o:21,c:"CNY",ctx:256e3},
+  {id:"mimo-v2f",n:"MIMO V2 Flash",p:"Xiaomi",i:0.7,o:2.1,c:"CNY"},
+  {id:"mimo-v25",n:"MIMO V2.5",p:"Xiaomi",i:2.8,o:14,c:"CNY",ctx:256e3},
+  {id:"mimo-v25p",n:"MIMO V2.5 Pro",p:"Xiaomi",i:7,o:21,c:"CNY",ctx:256e3},
+];
+const TPM={OpenAI:2e6,Anthropic:1e6,Google:4e6,DeepSeek:2e6,Qwen:2e6,Moonshot:1e6,"智谱AI":1e6,Minimax:1e6,Xiaomi:1e6};
+const RPM={OpenAI:1e4,Anthropic:4e3,Google:1e4,DeepSeek:5e3,Qwen:5e3,Moonshot:3e3,"智谱AI":3e3,Minimax:3e3,Xiaomi:3e3};
+let S={sel:"mog-1",tok:500000,rat:.7,avg:2000,cur:"USD",fp:"ALL",fc:"ALL"};
+
+const toU=(n,c)=>c==="USD"?n:n/R;
+const toC=(n,c)=>c==="CNY"?n:n*R;
+const fN=n=>n>=1e9?(n/1e9).toFixed(1)+"B":n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?(n/1e3).toFixed(0)+"K":String(n);
+const fU=n=>n>=1e6?"$"+(n/1e6).toFixed(2)+"M":n>=1e3?"$"+(n/1e3).toFixed(2)+"K":n>=1?"$"+n.toFixed(4):"$"+n.toFixed(6);
+const fC=n=>n>=1e8?"\u00a5"+(n/1e8).toFixed(2)+"\u4ebf":n>=1e4?"\u00a5"+(n/1e4).toFixed(2)+"\u4e07":n>=1?"\u00a5"+n.toFixed(2):"\u00a5"+n.toFixed(4);
+const fmt=(u,c)=>S.cur==="USD"?fU(u):fC(c);
+const falt=(u,c)=>S.cur==="USD"?fC(c):fU(u);
+function calc(tok,rat,m){
+  const ri=(tok*rat/1e6)*m.i,ro=(tok*(1-rat)/1e6)*m.o,rt=ri+ro;
+  const iu=toU(ri,m.c),ou=toU(ro,m.c),tu=toU(rt,m.c),tc=toC(rt,m.c),sc=DB/tok;
+  return{iu,ou,tu,tc,du:tu*sc,dc:tc*sc,mu:tu*sc*30,mc:tc*sc*30};
+}
+const fil=()=>M.filter(m=>(S.fp==="ALL"||m.p===S.fp)&&(S.fc==="ALL"||m.c===S.fc));
+function rFB(){
+  const ps=["ALL",...new Set(M.map(m=>m.p))],cs=["ALL","USD","CNY"];
+  document.getElementById("FB").innerHTML=
+    '<span class="fl">\u4f9b\u5e94\u5546\uff1a</span>'+
+    ps.map(p=>{const pal=PAL[p],on=S.fp===p;const s=on&&pal?` style="background:${pal.ch};border-color:${pal.a};color:${pal.a}"`:"";
+      return`<button class="chip${on?" on":""}"${s} onclick="setF('p','${p}')">${p==="ALL"?"\u5168\u90e8":p}</button>`;}).join("")+
+    '<span class="sep"></span><span class="fl">\u5e01\u79cd\uff1a</span>'+
+    cs.map(c=>{const on=S.fc===c;return`<button class="chip${on?" on":""}" onclick="setF('c','${c}')">${c==="ALL"?"\u5168\u90e8":c}</button>`;}).join("")+
+    `<span style="margin-left:auto;font-size:10px;color:var(--t3)">${fil().length}\u4e2a\u6a21\u578b</span>`;
+}
+function rMG(){
+  const list=fil(),ps=[...new Set(list.map(m=>m.p))];
+  document.getElementById("MG").innerHTML=ps.map(prov=>{
+    const grp=list.filter(m=>m.p===prov),pal=PAL[prov]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    return`<div class="prow"><div class="pname" style="color:${pal.a}">${prov}</div><div class="mcs">${
+      grp.map(m=>{const on=m.id===S.sel;const s=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
+        const tag=m.c==="CNY"?`\u00a5${m.i}/\u00a5${m.o}`:`$${m.i}/$${m.o}`;
+        return`<button class="mc${on?" on":""}"${s} onclick="selM('${m.id}')">${m.n}<span class="px">${tag}</span></button>`;
+      }).join("")}</div></div>`;
+  }).join("");
+}
+function rMB(){
+  const m=M.find(x=>x.id===S.sel),pal=PAL[m.p]||{a:"#888",bg:"rgba(136,136,136,.08)",ch:"rgba(136,136,136,.16)"};
+  const ip=m.c==="CNY"?`\u00a5${m.i}`:`$${m.i}`,op=m.c==="CNY"?`\u00a5${m.o}`:`$${m.o}`;
+  const eq=m.c==="CNY"?`<div class="meq"><div class="el">折合 USD</div><div class="ev">$${(m.i/R).toFixed(3)} / $${(m.o/R).toFixed(3)}</div></div>`:m.c==="USD"?`<div class="meq"><div class="el">折合 CNY</div><div class="ev">¥${(m.i*R).toFixed(2)} / ¥${(m.o*R).toFixed(2)}</div></div>`:"";
+  const nb=m.ctx?`<span class="nb">ctx ${fN(m.ctx)}</span>`:"";
+  document.getElementById("MB").innerHTML=`<div class="mb" style="background:${pal.bg};border:1px solid ${pal.a}22;border-radius:10px">
+    <div class="mav" style="background:${pal.a}">${m.p.slice(0,2).toUpperCase()}</div>
+    <div style="flex:1"><div class="mn">${m.n}</div>
+    <div class="mm">\u8f93\u5165 <b style="color:${pal.a}">${ip}</b> / \u8f93\u51fa <b style="color:${pal.a}">${op}</b> per 1M tokens &middot; \u8ba1\u4ef7 ${m.c}</div></div>
+    ${eq}${nb}</div>`;
+}
+function rCC(){
+  const m=M.find(x=>x.id===S.sel),v=calc(S.tok,S.rat,m);
+  const cards=[
+    {icon:"\u26a1",label:"\u5355\u6b21\u8bf7\u6c42",sub:fN(S.tok)+" tokens",u:v.tu,cv:v.tc,ca:"#6c63ff"},
+    {icon:"\ud83d\udcc5",label:"\u6bcf\u65e5\u6210\u672c",sub:"10B tokens/\u5929",u:v.du,cv:v.dc,ca:"#a855f7"},
+    {icon:"\ud83d\udcca",label:"\u6bcf\u6708\u6210\u672c",sub:"\u00d730\u5929",u:v.mu,cv:v.mc,ca:"#ec4899"},
+    {icon:"📥",label:"输入成本",sub:"输出: "+fmt(v.ou,v.ou*R),u:v.iu,cv:v.iu*R,ca:"#f59e0b"},
+  ];
+  document.getElementById("CC").innerHTML=cards.map(cd=>`<div class="cc" style="--ca:${cd.ca}">
+    <div class="cct"><div><div class="ccl">${cd.label}</div><div class="ccs">${cd.sub}</div></div><div class="cci">${cd.icon}</div></div>
+    <div class="ccm">${fmt(cd.u,cd.cv)}</div><div class="cca">${falt(cd.u,cd.cv)}</div></div>`).join("");
+}
+function rRL(){
+  const m=M.find(x=>x.id===S.sel),tpm=TPM[m.p]||1e6,rpm=RPM[m.p]||3e3;
+  const reqN=Math.ceil(S.tok/S.avg),byT=S.tok/tpm,byR=reqN/rpm;
+  const mins=Math.ceil(Math.max(byT,byR)),tp=Math.min(S.tok/tpm*100,100),rp=Math.min(reqN/rpm*100,100);
+  const bot=byT>=byR?"TPM":"RPM",bc=p=>p>80?"#ff5370":p>50?"#ffc400":"#1de9b6";
+  document.getElementById("SG").innerHTML=[
+    {l:"\u8bf7\u6c42\u6570",v:fN(reqN),co:"var(--t2)"},{l:"\u9884\u8ba1\u8017\u65f6",v:mins+"min",co:"var(--t2)"},
+    {l:"\u74f6\u9888",v:bot,co:"#ffc400"},{l:"TPM\u4e0a\u9650",v:fN(tpm),co:"var(--t2)"},
+  ].map(s=>`<div class="sb"><div class="sbl">${s.l}</div><div class="sbv" style="color:${s.co}">${s.v}</div></div>`).join("");
+  document.getElementById("BR").innerHTML=[{l:"TPM\u4f7f\u7528\u7387",p:tp},{l:"RPM\u4f7f\u7528\u7387",p:rp}]
+    .map(b=>`<div class="br_"><div class="bh"><span>${b.l}</span><span>${b.p.toFixed(1)}%</span></div>
+      <div class="bt"><div class="bf" style="width:${b.p}%;background:${bc(b.p)}"></div></div></div>`).join("");
+}
+function rOPT(){
+  const m=M.find(x=>x.id===S.sel),base=calc(S.tok,S.rat,m),curAvg=toU((m.i+m.o)/2,m.c);
+  const alts=M.filter(x=>x.id!==S.sel).map(x=>({m:x,avg:toU((x.i+x.o)/2,x.c)}))
+    .filter(x=>x.avg<curAvg*.7).sort((a,b)=>a.avg-b.avg).slice(0,4);
+  let h=alts.length?alts.map(({m:alt})=>{
+    const ac=calc(S.tok,S.rat,alt),sv=((base.tu-ac.tu)/base.tu*100).toFixed(0),ap=PAL[alt.p]||{a:"#888",ch:"#222"};
+    const tag=alt.c==="CNY"?`\u00a5${alt.i}/\u00a5${alt.o}`:`$${alt.i}/$${alt.o}`;
+    return`<div class="ar" onclick="selM('${alt.id}')">
+      <div class="aav" style="background:${ap.a}">${alt.p.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1"><div class="an">${alt.n}</div><div class="ap">${tag} /1M</div></div>
+      <div><div class="asv">\u7701${sv}%</div><div class="acv">${fmt(ac.tu,ac.tc)}</div></div></div>`;
+  }).join(""):
+    `<div style="color:var(--t3);font-size:13px;padding-bottom:4px">\u2705 \u5f53\u524d\u5df2\u662f\u6700\u4f4e\u4ef7\u683c\u533a\u95f4</div>`;
+  document.getElementById("AR").innerHTML=h;
+}
+function rTB(){
+  const m=M.find(x=>x.id===S.sel),base=calc(S.tok,S.rat,m),list=fil();
+  document.getElementById("TB").innerHTML=list.map(row=>{
+    const v=calc(S.tok,S.rat,row),cur=row.id===S.sel,pal=PAL[row.p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    const r=base.tu>0?v.tu/base.tu:1;
+    const pI=row.c==="CNY"?`\u00a5${row.i}`:`$${row.i}`,pO=row.c==="CNY"?`\u00a5${row.o}`:`$${row.o}`;
+    const cmp=cur?`<span class="ceq">\u2014</span>`:r<1?`<span class="cdn">\u2193${((1-r)*100).toFixed(0)}%</span>`:`<span class="cup">\u2191${((r-1)*100).toFixed(0)}%</span>`;
+    const nb=cur?`<span class="nb2" style="background:${pal.ch};color:${pal.a}">\u5f53\u524d</span>`:"";
+    const cbg=row.c==="CNY"?"rgba(232,121,179,.12);color:#e879b3":"rgba(16,163,127,.12);color:#10a37f";
+    return`<tr class="${cur?"hi":""}" onclick="selM('${row.id}')">
+      <td><div class="tdm"><div class="mdot" style="background:${pal.a}"></div>
+        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${row.n}</span>${nb}</div></td>
+      <td style="color:var(--t3);font-size:11px">${row.p}</td>
+      <td><span class="cb" style="background:${cbg}">${row.c}</span></td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3)">${pI}</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3)">${pO}</td>
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(v.tu,v.tc)}</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3)">${fmt(v.mu,v.mc)}</td>
+      <td class="tdr">${cmp}</td></tr>`;
+  }).join("");
+}
+function render(){
+  rFB();rMG();rMB();rCC();rRL();rOPT();rTB();
+  document.getElementById("TD").textContent=fN(S.tok);
+  document.getElementById("RD").textContent=Math.round(S.rat*100)+"% / "+Math.round((1-S.rat)*100)+"%";
+  document.getElementById("AD").textContent=fN(S.avg);
+  document.getElementById("RI").style.width=(S.rat*100)+"%";
+}
+function upd(){S.tok=+document.getElementById("TS").value;S.rat=+document.getElementById("RS").value;S.avg=+document.getElementById("AS").value;render();}
+function selM(id){S.sel=id;render();}
+function setF(k,v){k==="p"?S.fp=v:S.fc=v;const vis=fil();if(!vis.find(m=>m.id===S.sel))S.sel=vis[0]?.id||M[0].id;render();}
+function setC(c){S.cur=c;document.querySelectorAll("#CT button").forEach((b,i)=>b.className=((c==="USD"&&i===0)||(c==="CNY"&&i===1))?"on":"");render();}
+render();
+</script></body></html>
