@@ -126,8 +126,8 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
       <div>
         <div class="ph"><span class="pl">平均 Token / 请求</span><span class="pv" id="AD" style="color:#1de9b6">2K</span></div>
         <div class="pi"><input type="text" id="AI" value="2000" style="--tc:#1de9b6" oninput="setAvg(this.value)" onchange="setAvg(this.value)"><span class="pu">tokens</span></div>
-        <input type="range" id="AS" min="100" max="100000" step="100" value="2000" style="--tc:#1de9b6" oninput="upd()">
-        <div class="rl"><span>100</span><span>10K</span><span>100K</span></div>
+        <input type="range" id="AS" min="100" max="10000000" step="1000" value="2000" style="--tc:#1de9b6" oninput="upd()">
+        <div class="rl"><span>100</span><span>100K</span><span>1M</span><span>10M</span></div>
       </div>
     </div>
   </div></div>
@@ -352,7 +352,7 @@ function setRat(v){
 function setAvg(v){
   const raw=parseInt(v.replace(/[^0-9]/g,""));
   if(!raw&&raw!==0)return;
-  S.avg=Math.max(100,Math.min(100000,raw));
+  S.avg=Math.max(100,Math.min(10000000,raw));
   document.getElementById("AS").value=S.avg;
   document.getElementById("AD").textContent=fN(S.avg);
   render();
