@@ -113,8 +113,8 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
       <div>
         <div class="ph"><span class="pl">Token 总量</span><span class="pv" id="TD" style="color:#6c63ff">500K</span></div>
         <div class="pi"><input type="text" id="TI" value="500000" style="--tc:#6c63ff" oninput="setTok(this.value)" onchange="setTok(this.value)"><span class="pu">tokens</span></div>
-        <input type="range" id="TS" min="1000" max="10000000" step="10000" value="500000" style="--tc:#6c63ff" oninput="upd()">
-        <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>10M</span></div>
+        <input type="range" id="TS" min="1000" max="100000000000" step="100000" value="500000" style="--tc:#6c63ff" oninput="upd()">
+        <div class="rl"><span>1K</span><span>1M</span><span>1B</span><span>100B</span></div>
       </div>
       <div>
         <div class="ph"><span class="pl">输入 / 输出比例</span><span class="pv" id="RD" style="color:#c084fc">70% / 30%</span></div>
@@ -214,7 +214,7 @@ let S={sel:"mog-1",tok:500000,rat:.7,avg:2000,cur:"USD",fp:"ALL",fc:"ALL"};
 
 const toU=(n,c)=>c==="USD"?n:n/R;
 const toC=(n,c)=>c==="CNY"?n:n*R;
-const fN=n=>n>=1e9?(n/1e9).toFixed(1)+"B":n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?(n/1e3).toFixed(0)+"K":String(n);
+const fN=n=>n>=1e12?(n/1e12).toFixed(1)+"T":n>=1e9?(n/1e9).toFixed(1)+"B":n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?(n/1e3).toFixed(0)+"K":String(n);
 const fU=n=>n>=1e6?"$"+(n/1e6).toFixed(2)+"M":n>=1e3?"$"+(n/1e3).toFixed(2)+"K":n>=1?"$"+n.toFixed(4):"$"+n.toFixed(6);
 const fC=n=>n>=1e8?"\u00a5"+(n/1e8).toFixed(2)+"\u4ebf":n>=1e4?"\u00a5"+(n/1e4).toFixed(2)+"\u4e07":n>=1?"\u00a5"+n.toFixed(2):"\u00a5"+n.toFixed(4);
 const fmt=(u,c)=>S.cur==="USD"?fU(u):fC(c);
@@ -335,7 +335,7 @@ function upd(){
 function setTok(v){
   const raw=parseInt(v.replace(/[^0-9]/g,""));
   if(!raw&&raw!==0)return;
-  S.tok=Math.max(1000,Math.min(10000000,raw));
+  S.tok=Math.max(1000,Math.min(100000000000,raw));
   document.getElementById("TS").value=S.tok;
   document.getElementById("TD").textContent=fN(S.tok);
   render();
