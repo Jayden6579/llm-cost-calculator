@@ -224,15 +224,13 @@ function calc(tok,rat,m){
   const iu=toU(ri,m.c),ou=toU(ro,m.c),tu=toU(rt,m.c),tc=toC(rt,m.c),sc=DB/tok;
   return{iu,ou,tu,tc,du:tu*sc,dc:tc*sc,mu:tu*sc*30,mc:tc*sc*30};
 }
-const fil=()=>M.filter(m=>(S.fp==="ALL"||m.p===S.fp)&&(S.fc==="ALL"||m.c===S.fc));
+const fil=()=>M.filter(m=>(S.fp==="ALL"||m.p===S.fp));
 function rFB(){
-  const ps=["ALL",...new Set(M.map(m=>m.p))],cs=["ALL","USD","CNY"];
+  const ps=["ALL",...new Set(M.map(m=>m.p))];
   document.getElementById("FB").innerHTML=
     '<span class="fl">\u4f9b\u5e94\u5546\uff1a</span>'+
     ps.map(p=>{const pal=PAL[p],on=S.fp===p;const s=on&&pal?` style="background:${pal.ch};border-color:${pal.a};color:${pal.a}"`:"";
       return`<button class="chip${on?" on":""}"${s} onclick="setF('p','${p}')">${p==="ALL"?"\u5168\u90e8":p}</button>`;}).join("")+
-    '<span class="sep"></span><span class="fl">\u5e01\u79cd\uff1a</span>'+
-    cs.map(c=>{const on=S.fc===c;return`<button class="chip${on?" on":""}" onclick="setF('c','${c}')">${c==="ALL"?"\u5168\u90e8":c}</button>`;}).join("")+
     `<span style="margin-left:auto;font-size:10px;color:var(--t3)">${fil().length}\u4e2a\u6a21\u578b</span>`;
 }
 function rMG(){
@@ -356,7 +354,7 @@ function setAvg(v){
   render();
 }
 function selM(id){S.sel=id;render();}
-function setF(k,v){k==="p"?S.fp=v:S.fc=v;const vis=fil();if(!vis.find(m=>m.id===S.sel))S.sel=vis[0]?.id||M[0].id;render();}
+function setF(k,v){if(k==="p"){S.fp=v;const vis=fil();if(!vis.find(m=>m.id===S.sel))S.sel=vis[0]?.id||M[0].id;}render();}
 function setC(c){S.cur=c;document.querySelectorAll("#CT button").forEach((b,i)=>b.className=((c==="USD"&&i===0)||(c==="CNY"&&i===1))?"on":"");render();}
 render();
 </script></body></html>
