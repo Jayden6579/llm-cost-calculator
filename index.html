@@ -48,6 +48,10 @@ nav{position:sticky;top:0;z-index:200;background:rgba(8,8,13,.92);backdrop-filte
 input[type=range]{width:100%;height:2px;cursor:pointer;background:var(--b2);border-radius:1px;outline:none;border:none;-webkit-appearance:none;appearance:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--tc,var(--p));cursor:pointer;box-shadow:0 0 0 3px rgba(108,99,255,.18)}
 .rl{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px}
+.pi{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.pi input[type=text]{background:var(--s2);border:1px solid var(--b2);border-radius:6px;color:var(--t1);font-family:var(--mono);font-size:13px;font-weight:700;padding:3px 8px;width:90px;outline:none;text-align:right;transition:border-color .15s}
+.pi input[type=text]:focus{border-color:var(--tc,var(--p))}
+.pi .pu{font-size:11px;color:var(--t3)}
 .rvis{display:flex;height:3px;border-radius:2px;overflow:hidden;margin-top:7px}
 .rvi{background:#6c63ff;transition:width .1s}.rvo{flex:1;background:#c084fc}
 .cc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rr);padding:16px;position:relative;overflow:hidden}
@@ -108,17 +112,20 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px">
       <div>
         <div class="ph"><span class="pl">Token 总量</span><span class="pv" id="TD" style="color:#6c63ff">500K</span></div>
+        <div class="pi"><input type="text" id="TI" value="500000" style="--tc:#6c63ff" onchange="setTok(this.value)" onkeydown="if(event.key==='Enter')setTok(this.value)"><span class="pu">tokens</span></div>
         <input type="range" id="TS" min="1000" max="10000000" step="10000" value="500000" style="--tc:#6c63ff" oninput="upd()">
         <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>10M</span></div>
       </div>
       <div>
         <div class="ph"><span class="pl">输入 / 输出比例</span><span class="pv" id="RD" style="color:#c084fc">70% / 30%</span></div>
+        <div class="pi"><input type="text" id="RI2" value="70" style="--tc:#c084fc" onchange="setRat(this.value)" onkeydown="if(event.key==='Enter')setRat(this.value)"><span class="pu">% 输入</span></div>
         <input type="range" id="RS" min="0.1" max="0.9" step="0.05" value="0.7" style="--tc:#c084fc" oninput="upd()">
         <div class="rvis"><div class="rvi" id="RI" style="width:70%"></div><div class="rvo"></div></div>
         <div class="rl"><span style="color:#6c63ff">● 输入</span><span style="color:#c084fc">输出 ●</span></div>
       </div>
       <div>
         <div class="ph"><span class="pl">平均 Token / 请求</span><span class="pv" id="AD" style="color:#1de9b6">2K</span></div>
+        <div class="pi"><input type="text" id="AI" value="2000" style="--tc:#1de9b6" onchange="setAvg(this.value)" onkeydown="if(event.key==='Enter')setAvg(this.value)"><span class="pu">tokens</span></div>
         <input type="range" id="AS" min="100" max="100000" step="100" value="2000" style="--tc:#1de9b6" oninput="upd()">
         <div class="rl"><span>100</span><span>10K</span><span>100K</span></div>
       </div>
@@ -318,7 +325,36 @@ function render(){
   document.getElementById("AD").textContent=fN(S.avg);
   document.getElementById("RI").style.width=(S.rat*100)+"%";
 }
-function upd(){S.tok=+document.getElementById("TS").value;S.rat=+document.getElementById("RS").value;S.avg=+document.getElementById("AS").value;render();}
+function upd(){
+  S.tok=+document.getElementById("TS").value;
+  S.rat=+document.getElementById("RS").value;
+  S.avg=+document.getElementById("AS").value;
+  document.getElementById("TI").value=S.tok;
+  document.getElementById("RI2").value=Math.round(S.rat*100);
+  document.getElementById("AI").value=S.avg;
+  render();
+}
+function setTok(v){
+  const n=parseInt(v.replace(/[^0-9]/g,""))||500000;
+  S.tok=Math.max(1000,Math.min(10000000,n));
+  document.getElementById("TS").value=S.tok;
+  document.getElementById("TI").value=S.tok;
+  render();
+}
+function setRat(v){
+  const n=parseFloat(v)||70;
+  S.rat=Math.max(10,Math.min(90,n))/100;
+  document.getElementById("RS").value=S.rat;
+  document.getElementById("RI2").value=Math.round(S.rat*100);
+  render();
+}
+function setAvg(v){
+  const n=parseInt(v.replace(/[^0-9]/g,""))||2000;
+  S.avg=Math.max(100,Math.min(100000,n));
+  document.getElementById("AS").value=S.avg;
+  document.getElementById("AI").value=S.avg;
+  render();
+}
 function selM(id){S.sel=id;render();}
 function setF(k,v){k==="p"?S.fp=v:S.fc=v;const vis=fil();if(!vis.find(m=>m.id===S.sel))S.sel=vis[0]?.id||M[0].id;render();}
 function setC(c){S.cur=c;document.querySelectorAll("#CT button").forEach((b,i)=>b.className=((c==="USD"&&i===0)||(c==="CNY"&&i===1))?"on":"");render();}
