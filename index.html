@@ -112,20 +112,20 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px">
       <div>
         <div class="ph"><span class="pl">Token 总量</span><span class="pv" id="TD" style="color:#6c63ff">500K</span></div>
-        <div class="pi"><input type="text" id="TI" value="500000" style="--tc:#6c63ff" onchange="setTok(this.value)" onkeydown="if(event.key==='Enter')setTok(this.value)"><span class="pu">tokens</span></div>
+        <div class="pi"><input type="text" id="TI" value="500000" style="--tc:#6c63ff" oninput="setTok(this.value)" onchange="setTok(this.value)"><span class="pu">tokens</span></div>
         <input type="range" id="TS" min="1000" max="10000000" step="10000" value="500000" style="--tc:#6c63ff" oninput="upd()">
         <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>10M</span></div>
       </div>
       <div>
         <div class="ph"><span class="pl">输入 / 输出比例</span><span class="pv" id="RD" style="color:#c084fc">70% / 30%</span></div>
-        <div class="pi"><input type="text" id="RI2" value="70" style="--tc:#c084fc" onchange="setRat(this.value)" onkeydown="if(event.key==='Enter')setRat(this.value)"><span class="pu">% 输入</span></div>
+        <div class="pi"><input type="text" id="RI2" value="70" style="--tc:#c084fc" oninput="setRat(this.value)" onchange="setRat(this.value)"><span class="pu">% 输入</span></div>
         <input type="range" id="RS" min="0.1" max="0.9" step="0.05" value="0.7" style="--tc:#c084fc" oninput="upd()">
         <div class="rvis"><div class="rvi" id="RI" style="width:70%"></div><div class="rvo"></div></div>
         <div class="rl"><span style="color:#6c63ff">● 输入</span><span style="color:#c084fc">输出 ●</span></div>
       </div>
       <div>
         <div class="ph"><span class="pl">平均 Token / 请求</span><span class="pv" id="AD" style="color:#1de9b6">2K</span></div>
-        <div class="pi"><input type="text" id="AI" value="2000" style="--tc:#1de9b6" onchange="setAvg(this.value)" onkeydown="if(event.key==='Enter')setAvg(this.value)"><span class="pu">tokens</span></div>
+        <div class="pi"><input type="text" id="AI" value="2000" style="--tc:#1de9b6" oninput="setAvg(this.value)" onchange="setAvg(this.value)"><span class="pu">tokens</span></div>
         <input type="range" id="AS" min="100" max="100000" step="100" value="2000" style="--tc:#1de9b6" oninput="upd()">
         <div class="rl"><span>100</span><span>10K</span><span>100K</span></div>
       </div>
@@ -333,24 +333,28 @@ function upd(){
   render();
 }
 function setTok(v){
-  const n=parseInt(v.replace(/[^0-9]/g,""))||500000;
-  S.tok=Math.max(1000,Math.min(10000000,n));
+  const raw=parseInt(v.replace(/[^0-9]/g,""));
+  if(!raw&&raw!==0)return;
+  S.tok=Math.max(1000,Math.min(10000000,raw));
   document.getElementById("TS").value=S.tok;
-  document.getElementById("TI").value=S.tok;
+  document.getElementById("TD").textContent=fN(S.tok);
   render();
 }
 function setRat(v){
-  const n=parseFloat(v)||70;
-  S.rat=Math.max(10,Math.min(90,n))/100;
+  const raw=parseFloat(v);
+  if(isNaN(raw)||v.trim()==="")return;
+  S.rat=Math.max(10,Math.min(90,raw))/100;
   document.getElementById("RS").value=S.rat;
-  document.getElementById("RI2").value=Math.round(S.rat*100);
+  document.getElementById("RI").style.width=(S.rat*100)+"%";
+  document.getElementById("RD").textContent=Math.round(S.rat*100)+"% / "+Math.round((1-S.rat)*100)+"%";
   render();
 }
 function setAvg(v){
-  const n=parseInt(v.replace(/[^0-9]/g,""))||2000;
-  S.avg=Math.max(100,Math.min(100000,n));
+  const raw=parseInt(v.replace(/[^0-9]/g,""));
+  if(!raw&&raw!==0)return;
+  S.avg=Math.max(100,Math.min(100000,raw));
   document.getElementById("AS").value=S.avg;
-  document.getElementById("AI").value=S.avg;
+  document.getElementById("AD").textContent=fN(S.avg);
   render();
 }
 function selM(id){S.sel=id;render();}
