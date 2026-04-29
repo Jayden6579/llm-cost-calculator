@@ -128,43 +128,47 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   </div>
 </nav>
 <div id="TAB_TEXT_WRAP"><div class="pg">
-  <div class="sec"><div class="card" style="padding:0;overflow:hidden">
-    <div id="SB" style="border-bottom:1px solid var(--b1);padding:6px 0;overflow-x:auto"></div>
-    <div style="overflow-y:auto;max-height:300px;padding:8px 12px" id="MG"></div>
-  </div></div>
-  <div id="MB" class="sec"></div>
-  <div class="sec"><div class="card">
-    <div class="ch">请求参数</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px">
-      <div>
-        <div class="ph"><span class="pl">Token 总量</span><span class="pv" id="TD" style="color:#6c63ff">500K</span></div>
-        <div class="pi"><input type="text" id="TI" value="500000" style="--tc:#6c63ff" oninput="setTok(this.value)" onchange="setTok(this.value)"><span class="pu">tokens</span></div>
-        <input type="range" id="TS" min="1000" max="100000000000" step="100000" value="500000" style="--tc:#6c63ff" oninput="upd()">
-        <div class="rl"><span>1K</span><span>1M</span><span>1B</span><span>100B</span></div>
-      </div>
-      <div>
-        <div class="ph"><span class="pl">输入 / 输出比例</span><span class="pv" id="RD" style="color:#c084fc">70% / 30%</span></div>
-        <div class="pi"><input type="text" id="RI2" value="70" style="--tc:#c084fc" oninput="setRat(this.value)" onchange="setRat(this.value)"><span class="pu">% 输入</span></div>
-        <input type="range" id="RS" min="0.1" max="0.9" step="0.05" value="0.7" style="--tc:#c084fc" oninput="upd()">
-        <div class="rvis"><div class="rvi" id="RI" style="width:70%"></div><div class="rvo"></div></div>
-        <div class="rl"><span style="color:#6c63ff">● 输入</span><span style="color:#c084fc">输出 ●</span></div>
-      </div>
-      <div>
-        <div class="ph"><span class="pl">平均 Token / 请求</span><span class="pv" id="AD" style="color:#1de9b6">2K</span></div>
-        <div class="pi"><input type="text" id="AI" value="2000" style="--tc:#1de9b6" oninput="setAvg(this.value)" onchange="setAvg(this.value)"><span class="pu">tokens</span></div>
-        <input type="range" id="AS" min="100" max="10000000" step="1000" value="2000" style="--tc:#1de9b6" oninput="upd()">
-        <div class="rl"><span>100</span><span>100K</span><span>1M</span><span>10M</span></div>
-      </div>
+  <div class="sec" style="display:grid;grid-template-columns:210px 1fr;gap:13px">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div id="SB" style="padding:6px 0;border-bottom:1px solid var(--b1)"></div>
+      <div style="overflow-y:auto;max-height:420px;padding:8px 12px" id="MG"></div>
     </div>
-  </div></div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px" class="sec" id="CC"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px" class="sec">
-    <div class="card"><div class="ch">⏱ 限流模拟</div><div class="sg" id="SG"></div><div id="BR"></div></div>
-    <div class="card">
-      <div class="ch">💡 成本优化</div>
-      <div id="AR"></div>
-      <div class="tph">降本技巧</div>
-      <div class="tip"><span class="tpa">→</span><span>输出 token 通常比输入贵数倍，精简输出可有效降低成本</span></div>
+    <div>
+      <div class="card" style="margin-bottom:13px">
+        <div class="ch">请求参数</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+          <div>
+            <div class="ph"><span class="pl">Token 总量</span><span class="pv" id="TD" style="color:#6c63ff">500K</span></div>
+            <div class="pi"><input type="text" id="TI" value="500000" style="--tc:#6c63ff" oninput="setTok(this.value)" onchange="setTok(this.value)"><span class="pu">tokens</span></div>
+            <input type="range" id="TS" min="1000" max="100000000000" step="100000" value="500000" style="--tc:#6c63ff" oninput="upd()">
+            <div class="rl"><span>1K</span><span>1M</span><span>1B</span><span>100B</span></div>
+          </div>
+          <div>
+            <div class="ph"><span class="pl">输入 / 输出比例</span><span class="pv" id="RD" style="color:#c084fc">70% / 30%</span></div>
+            <div class="pi"><input type="text" id="RI2" value="70" style="--tc:#c084fc" oninput="setRat(this.value)" onchange="setRat(this.value)"><span class="pu">% 输入</span></div>
+            <input type="range" id="RS" min="0.1" max="0.9" step="0.05" value="0.7" style="--tc:#c084fc" oninput="upd()">
+            <div class="rvis"><div class="rvi" id="RI" style="width:70%"></div><div class="rvo"></div></div>
+            <div class="rl"><span style="color:#6c63ff">● 输入</span><span style="color:#c084fc">输出 ●</span></div>
+          </div>
+          <div>
+            <div class="ph"><span class="pl">平均 Token / 请求</span><span class="pv" id="AD" style="color:#1de9b6">2K</span></div>
+            <div class="pi"><input type="text" id="AI" value="2000" style="--tc:#1de9b6" oninput="setAvg(this.value)" onchange="setAvg(this.value)"><span class="pu">tokens</span></div>
+            <input type="range" id="AS" min="100" max="10000000" step="1000" value="2000" style="--tc:#1de9b6" oninput="upd()">
+            <div class="rl"><span>100</span><span>100K</span><span>1M</span><span>10M</span></div>
+          </div>
+        </div>
+      </div>
+      <div id="MB"></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:13px" id="CC"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
+        <div class="card"><div class="ch">⏱ 限流模拟</div><div class="sg" id="SG"></div><div id="BR"></div></div>
+        <div class="card">
+          <div class="ch">💡 成本优化</div>
+          <div id="AR"></div>
+          <div class="tph">降本技巧</div>
+          <div class="tip"><span class="tpa">→</span><span>输出 token 通常比输入贵数倍，精简输出可有效降低成本</span></div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="tw sec">
@@ -216,11 +220,14 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
 
 <!-- EMBED TAB -->
 <div id="TAB_EMBED_WRAP" style="display:none"><div class="pg">
-  <div class="sec">
-    <div class="card">
-      <div class="ch">Embedding & Rerank 模型</div>
-      <p style="color:var(--t3);font-size:12px;margin-bottom:16px">按 Token 数量计费，适用于向量化和排序场景</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+  <div class="sec" style="display:grid;grid-template-columns:210px 1fr;gap:13px">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div id="EMSB" style="padding:6px 0;border-bottom:1px solid var(--b1)"></div>
+      <div style="overflow-y:auto;max-height:420px;padding:8px" id="EM_LIST"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:13px">
+        <div class="ch">用量估算</div>
         <div>
           <div class="ph"><span class="pl">Token 数量（百万）</span><span class="pv" id="ET_D" style="color:#6c63ff">1</span></div>
           <div class="pi"><input type="text" id="ET_I" value="1" style="--tc:#6c63ff" oninput="eUpd()" onchange="eUpd()"><span class="pu">M tokens</span></div>
@@ -308,15 +315,20 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
 
 <!-- SPEECH TAB -->
 <div id="TAB_SPEECH_WRAP" style="display:none"><div class="pg">
-  <div class="sec">
-    <div class="card">
-      <div class="ch">语音生成模型</div>
-      <p style="color:var(--t3);font-size:12px;margin-bottom:16px">按字符数量计费（ElevenLabs，USD计价）</p>
-      <div>
-        <div class="ph"><span class="pl">字符数量（千字）</span><span class="pv" id="SP_D" style="color:#6c63ff">10</span></div>
-        <div class="pi"><input type="text" id="SP_I" value="10" style="--tc:#6c63ff" oninput="spUpd()" onchange="spUpd()"><span class="pu">K chars</span></div>
-        <input type="range" id="SP_S" min="1" max="10000" step="1" value="10" style="--tc:#6c63ff" oninput="spUpd()">
-        <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>10M</span></div>
+  <div class="sec" style="display:grid;grid-template-columns:210px 1fr;gap:13px">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div id="SPSB" style="padding:6px 0;border-bottom:1px solid var(--b1)"></div>
+      <div style="overflow-y:auto;max-height:420px;padding:8px" id="SP_LIST"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:13px">
+        <div class="ch">用量估算</div>
+        <div>
+          <div class="ph"><span class="pl">字符数量（千字）</span><span class="pv" id="SP_D" style="color:#6c63ff">10</span></div>
+          <div class="pi"><input type="text" id="SP_I" value="10" style="--tc:#6c63ff" oninput="spUpd()" onchange="spUpd()"><span class="pu">K chars</span></div>
+          <input type="range" id="SP_S" min="1" max="10000" step="1" value="10" style="--tc:#6c63ff" oninput="spUpd()">
+          <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>10M</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -782,16 +794,36 @@ const EM=[
   {id:"qwen3-reranker-8b",n:"qwen3-reranker-8b",p:"Qwen",c:"CNY",type:"Rerank",unit:"K",price:0.5,r:"国内版"},
   {id:"moe-1",n:"text-embedding-3-small",p:"OpenAI",c:"USD",type:"Embedding",unit:"M",price:0.02,r:"国内版"},
 ];
-let ES={tokens:1,sel:"qwen3-embedding-8b"};
+let ES={tokens:1,sel:"qwen3-embedding-8b",fp:"ALL"};
 function eUpd(){
   ES.tokens=Math.max(0.001,parseFloat(document.getElementById("ET_I").value)||1);
   document.getElementById("ET_S").value=Math.min(ES.tokens,100);
   document.getElementById("ET_D").textContent=ES.tokens+"M";
   eRender();
 }
+const EMPAL={"Qwen":{a:"#6c63ff",ch:"rgba(108,99,255,.16)"},"OpenAI":{a:"#10a37f",ch:"rgba(16,163,127,.16)"}};
+function setFEM(p){ES.fp=p;eRender();}
+function rEMList(){
+  const filEM=EM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  rSidebar("EMSB",filEM,"fp",ES.fp==="ALL"?null:ES.fp,"setFEM",EMPAL);
+  const dispEM=ES.fp==="ALL"?filEM:filEM.filter(m=>m.p===ES.fp);
+  const ps=["Qwen","OpenAI"];
+  document.getElementById("EM_LIST").innerHTML=ps.map(p=>{
+    const ms=dispEM.filter(m=>m.p===p);if(!ms.length)return"";
+    const pal=EMPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
+    ms.map(m=>{
+      const on=m.id===ES.sel;const style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
+      return`<div class="mrow${on?" on":""}"${style} onclick="ES.sel=event.currentTarget.dataset.id;eRender()" data-id="${m.id}">
+        <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
+        <span class="mrow-name" style="font-size:12px">${m.n}</span></div>`;
+    }).join("")+"</div>";
+  }).join("");
+}
 function eRender(){
   if(!document.getElementById("ET_BODY")) return;
   const filEM=EM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  rEMList();
   // 计算当前选中模型（第一个或 ES.sel）的成本作为基准
   const baseM=filEM.find(m=>m.id===ES.sel)||filEM[0];
   const calcCost=m=>m.unit==="M"?m.price*ES.tokens*(m.c==="USD"?R:1):m.price*ES.tokens*1000*(m.c==="USD"?R:1);
@@ -963,7 +995,26 @@ const SM=[
   {id:"eleven-flash-v2.5",n:"eleven-flash-v2.5",p:"ElevenLabs",c:"USD",r:"国内版",price:0.06},
   {id:"eleven-v3",n:"eleven-v3",p:"ElevenLabs",c:"USD",r:"国内版",price:0.12},
 ];
-let SPS={chars:10};
+let SPS={chars:10,sel:"eleven-flash-v2",fp:"ALL"};
+const SPPAL={"ElevenLabs":{a:"#f59e0b",ch:"rgba(245,158,11,.16)"}};
+function setFSP(p){SPS.fp=p;spRender();}
+function rSPList(){
+  const filSM2=SM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  rSidebar("SPSB",filSM2,"fp",SPS.fp==="ALL"?null:SPS.fp,"setFSP",SPPAL);
+  const dispSM=SPS.fp==="ALL"?filSM2:filSM2.filter(m=>m.p===SPS.fp);
+  const ps=["ElevenLabs"];
+  document.getElementById("SP_LIST").innerHTML=ps.map(p=>{
+    const ms=dispSM.filter(m=>m.p===p);if(!ms.length)return"";
+    const pal=SPPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
+    ms.map(m=>{
+      const on=m.id===SPS.sel;const style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
+      return`<div class="mrow${on?" on":""}"${style} onclick="SPS.sel=event.currentTarget.dataset.id;spRender()" data-id="${m.id}">
+        <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
+        <span class="mrow-name" style="font-size:12px">${m.n}</span></div>`;
+    }).join("")+"</div>";
+  }).join("");
+}
 function spUpd(){
   SPS.chars=Math.max(1,parseFloat(document.getElementById("SP_I").value)||10);
   document.getElementById("SP_S").value=Math.min(SPS.chars,10000);
@@ -972,6 +1023,7 @@ function spUpd(){
 }
 function spRender(){
   if(!document.getElementById("SP_BODY")) return;
+  rSPList();
   const filSM=SM.filter(m=>S.fv==="全部"||m.r===S.fv);
   const baseSM=filSM[0];
   const baseCostSP=baseSM?baseSM.price*SPS.chars*R:1;
