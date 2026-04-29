@@ -735,7 +735,7 @@ const ALL_TABS=["text","embed","vision","video","image","speech"];
 function setTab(t){
   ALL_TABS.forEach(id=>{
     const w=document.getElementById("TAB_"+id.toUpperCase()+"_WRAP");
-    if(w) w.style.display=t===id?"":"none";
+    if(w) w.style.display=t===id?"block":"none";
   });
   document.getElementById("NR_TEXT").style.display=t==="text"?"flex":"none";
   document.querySelectorAll("#MAINTABT button").forEach(b=>{b.className=b.id==="TAB_BTN_"+t.toUpperCase()?"on":"";});
