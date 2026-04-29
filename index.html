@@ -616,14 +616,15 @@ function setC(c){S.cur=c;document.querySelectorAll("#CT button").forEach((b,i)=>
 // ===== 视频/图片 Tab =====
 const VPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,53,.16)"},Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"},Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},Minimax:{a:"#f97316",bg:"rgba(249,115,22,.08)",ch:"rgba(249,115,22,.16)"}};
 const VM=[
-  {id:"kling-v3",n:"kling-v3",p:"可灵AI",c:"CNY",r:"国内版",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.9},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.2}]},
-  {id:"kling-v3-omni",n:"kling-v3-omni",p:"可灵AI",c:"CNY",r:"国内版",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.8},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.0}]},
-  {id:"kling-v2-6",n:"kling-v2-6",p:"可灵AI",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std-sil",label:"Std · 无声",ps:1.5},{k:"std-act",label:"Std · 动作控制",ps:2.5},{k:"pro-sil",label:"Pro · 无声",ps:2.5},{k:"pro-snd",label:"Pro · 有声",ps:5.0},{k:"pro-snd-v",label:"Pro · 有声·指定音色",ps:6.0}]},
+  {id:"kling-v3",n:"kling-v3",p:"可灵AI",c:"CNY",r:"国内版",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.9},{k:"std-act",label:"Std · 动作控制",ps:0.9},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.2},{k:"pro-act",label:"Pro · 动作控制",ps:1.2}]},
+  {id:"kling-v3-omni",n:"kling-v3-omni",p:"可灵AI",c:"CNY",r:"国内版",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.8},{k:"std-ref-sil",label:"Std · 参考·无声",ps:0.9},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.0},{k:"pro-ref-sil",label:"Pro · 参考·无声",ps:1.2}]},
+  {id:"kling-v2-6",n:"kling-v2-6",p:"可灵AI",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std-sil",label:"Std · 无声",ps:1.5},{k:"std-act",label:"Std · 动作控制",ps:2.5},{k:"pro-sil",label:"Pro · 无声",ps:2.5},{k:"pro-act",label:"Pro · 动作控制",ps:4.0},{k:"pro-snd",label:"Pro · 有声",ps:5.0},{k:"pro-snd-v",label:"Pro · 有声·指定音色",ps:6.0}]},
   {id:"kling-video-o1",n:"kling-video-o1",p:"可灵AI",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std-no-ref",label:"Std · 无参考",ps:3.0},{k:"pro-no-ref",label:"Pro · 无参考",ps:4.0},{k:"std-ref",label:"Std · 参考视频",ps:4.5},{k:"pro-ref",label:"Pro · 参考视频",ps:6.0}]},
   {id:"kling-v2-1-master",n:"kling-v2-1-master",p:"可灵AI",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std",label:"标准",ps:10.0}]},
+  {id:"kling-v2-5-turbo",n:"kling-v2-5-turbo",p:"可灵AI",c:"CNY",r:"国内版",unit:"sec",variants:[{k:"std",label:"Std · 1s",ps:1.5},{k:"pro",label:"Pro · 1s",ps:1.5}]},
   {id:"hailuo-2.3",n:"hailuo-2.3",p:"Minimax",c:"CNY",r:"国内版",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
   {id:"hailuo-2.3-fast",n:"hailuo-2.3-fast",p:"Minimax",c:"CNY",r:"国内版",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:1.35,dur:6},{k:"768p-10s",label:"768p · 10s",price:2.25,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:2.31,dur:6}]},
-  {id:"hailuo-02",n:"hailuo-02",p:"Minimax",c:"CNY",r:"国内版",unit:"fixed",variants:[{k:"512p-6s",label:"512p · 6s",price:0.6,dur:6},{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
+  {id:"hailuo-02",n:"hailuo-02",p:"Minimax",c:"CNY",r:"国内版",unit:"fixed",variants:[{k:"512p-6s",label:"512p · 6s",price:0.6,dur:6},{k:"512p-10s",label:"512p · 10s",price:1.0,dur:10},{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
   {id:"mgv-1",n:"veo-3.1-generate-preview",p:"Google",c:"USD",r:"国内版",unit:"5s",variants:[{k:"std",label:"Std (720p/1080p)",ps:2.0},{k:"pro",label:"Pro (4K)",ps:3.0}]},
   {id:"wan2.6-i2v",n:"wan2.6-i2v",p:"Qwen",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std",label:"Std (720p)",ps:3.0},{k:"pro",label:"Pro (1080p)",ps:5.0}]},
 ];
@@ -846,20 +847,12 @@ function visRender(){
 function visSel(id){VISS.sel=id;visRender();}
 
 // ===== 图片生成 =====
-const IMPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,53,.16)"},Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},"豆包":{a:"#00bcd4",bg:"rgba(0,188,212,.08)",ch:"rgba(0,188,212,.16)"},Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"}};
-const IM=[
-  {id:"kling-v3-img",n:"kling-v3",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.3},{k:"4k",label:"4k 规格",price:0.6}]},
-  {id:"kling-v3-omni-img",n:"kling-v3-omni",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.2},{k:"4k",label:"4k 规格",price:0.4}]},
-  {id:"wan2.6-t2i",n:"wan2.6-t2i",p:"Qwen",c:"CNY",r:"国内版",variants:[{k:"std",label:"文生图",price:0.2}]},
-  {id:"doubao-seedream-4.5",n:"doubao-seedream-4.5",p:"豆包",c:"CNY",r:"国内版",variants:[{k:"t2i",label:"文生图",price:0.25},{k:"i2i",label:"图生图",price:0.25}]},
-  {id:"mgg-9",n:"gemini-3.1-flash-image",p:"Google",c:"USD",r:"国内版",variants:[{k:"std",label:"标准",price:0.5}]},
-  {id:"mgg-5",n:"gemini-2.5-flash-image",p:"Google",c:"USD",r:"国内版",variants:[{k:"std",label:"标准",price:0.3}]},
-  {id:"mgg-6",n:"gemini-3-pro-image",p:"Google",c:"USD",r:"国内版",variants:[{k:"std",label:"标准",price:2.0}]},
-  {id:"mgg-9-global",n:"gemini-3.1-flash-image (国际)",p:"Google",c:"USD",r:"国际版",variants:[{k:"std",label:"标准",price:0.5}]},
-  {id:"mgg-5-global",n:"gemini-2.5-flash-image (国际)",p:"Google",c:"USD",r:"国际版",variants:[{k:"std",label:"标准",price:0.3}]},
-  {id:"mgg-6-global",n:"gemini-3-pro-image (国际)",p:"Google",c:"USD",r:"国际版",variants:[{k:"std",label:"标准",price:2.0}]},
+const IMPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,53,.16)"}};const IM=[
+  {id:"kling-v3-img",n:"kling-v3",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.3}]},
+  {id:"kling-v3-omni-img",n:"kling-v3-omni",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k",label:"1k 规格",price:0.2},{k:"2k",label:"2k 规格",price:0.2},{k:"4k",label:"4k 规格",price:0.4}]},
 ];
 let IS={sel:"kling-v3-img",vk:"1k2k",count:100};
+
 function imgUpd(){
   IS.count=Math.max(1,parseInt(document.getElementById("IN_I").value)||100);
   document.getElementById("IN_S").value=Math.min(IS.count,100000);
@@ -872,7 +865,7 @@ function imgRender(){
   if(!document.getElementById("IM_LIST")) return;
   const filIM=IM.filter(m=>S.fv==="全部"||m.r===S.fv);
   if(!filIM.find(m=>m.id===IS.sel)&&filIM.length){IS.sel=filIM[0].id;IS.vk=filIM[0].variants[0].k;}
-  const ps=["可灵AI","Qwen","豆包","Google"];
+  const ps=["可灵AI"];
   document.getElementById("IM_LIST").innerHTML=ps.map(p=>{
     const ms=filIM.filter(m=>m.p===p);if(!ms.length)return"";
     const pal=IMPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
