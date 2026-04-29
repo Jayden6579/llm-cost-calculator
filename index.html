@@ -210,7 +210,7 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   <div class="tw sec">
     <div class="twh"><span class="twt">📋 视频模型价格对比</span><span class="twi">点击行切换模型</span></div>
     <table><thead><tr>
-      <th>模型</th><th>供应商</th><th>计费单位</th><th class="r">最低单价</th><th class="r">最高单价</th><th class="r">当前成本/条</th>
+      <th>模型</th><th>供应商</th><th>计费单位</th><th class="r">最低单价</th><th class="r">最高单价</th><th class="r">单条成本</th><th class="r">总成本</th><th class="r">vs当前</th>
     </tr></thead><tbody id="VT_BODY"></tbody></table>
   </div>
   <div class="foot">视频/图片价格仅供参考，以各平台官方最新定价为准</div>
@@ -235,7 +235,7 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   <div class="tw sec">
     <div class="twh"><span class="twt">Embedding & Rerank 定价</span></div>
     <table><thead><tr>
-      <th>模型</th><th>供应商</th><th>类型</th><th class="r">单价</th><th class="r">估算成本</th>
+      <th>模型</th><th>供应商</th><th>类型</th><th class="r">单价</th><th class="r">估算成本</th><th class="r">vs当前</th>
     </tr></thead><tbody id="ET_BODY"></tbody></table>
   </div>
   <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
@@ -272,7 +272,7 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   <div class="tw sec">
     <div class="twh"><span class="twt">视觉理解模型价格对比</span></div>
     <table><thead><tr>
-      <th>模型</th><th>供应商</th><th class="r">输入价</th><th class="r">输出价</th><th class="r">估算总成本</th>
+      <th>模型</th><th>供应商</th><th class="r">输入价</th><th class="r">输出价</th><th class="r">估算总成本</th><th class="r">vs当前</th>
     </tr></thead><tbody id="VIS_BODY"></tbody></table>
   </div>
   <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
@@ -302,7 +302,7 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   <div class="tw sec">
     <div class="twh"><span class="twt">图片模型价格对比</span></div>
     <table><thead><tr>
-      <th>模型</th><th>供应商</th><th>规格</th><th class="r">单价/张</th><th class="r">当前成本</th>
+      <th>模型</th><th>供应商</th><th>规格</th><th class="r">单价/张</th><th class="r">总成本</th><th class="r">vs当前</th>
     </tr></thead><tbody id="IT_BODY"></tbody></table>
   </div>
   <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
@@ -325,7 +325,7 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   <div class="tw sec">
     <div class="twh"><span class="twt">语音生成模型定价</span></div>
     <table><thead><tr>
-      <th>模型</th><th>供应商</th><th class="r">单价</th><th class="r">估算成本</th>
+      <th>模型</th><th>供应商</th><th class="r">单价</th><th class="r">估算成本</th><th class="r">vs当前</th>
     </tr></thead><tbody id="SP_BODY"></tbody></table>
   </div>
   <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
@@ -700,26 +700,33 @@ function rVTable(){
   const isFixed=curM.unit==="fixed";
   const cv=curM.variants.find(x=>x.k===VS.vk)||curM.variants[0];
   const effSecs=isFixed?cv.dur:VS.secs;
+  const{priceC:basePriceC}=vCalcOne(curM,VS.vk,effSecs);
+  const baseTotal=basePriceC*VS.count;
   document.getElementById("VT_BODY").innerHTML=filVM.map(m=>{
     const pal=VPAL[m.p]||{a:"#888"};
     const prices=m.variants.map(v=>{
-      const s=m.unit==="USD"?R:1;
       if(m.unit==="fixed") return v.price*(m.c==="USD"?R:1);
       if(m.unit==="sec") return v.ps*effSecs*(m.c==="USD"?R:1);
       return v.ps*Math.ceil(effSecs/5)*(m.c==="USD"?R:1);
     });
     const minP=Math.min(...prices),maxP=Math.max(...prices);
     const{priceC}=vCalcOne(m,VS.vk,effSecs);
+    const total=priceC*VS.count;
     const cur=m.id===VS.sel;
     const unitLabel=m.unit==="sec"?"元/秒":m.unit==="5s"?"元/5s":"固定价";
+    const ratio=baseTotal>0?total/baseTotal:1;
+    const cmp=cur?`<span class="ceq">—</span>`:ratio<1?`<span class="cdn">↓${((1-ratio)*100).toFixed(0)}%</span>`:`<span class="cup">↑${((ratio-1)*100).toFixed(0)}%</span>`;
+    const nb=cur?`<span class="nb2" style="background:${pal.a}22;color:${pal.a}">当前</span>`:"";
     return`<tr class="${cur?"hi":""}" onclick="vSelM('${m.id}')">
       <td><div class="tdm"><div class="mdot" style="background:${pal.a}"></div>
-        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${m.n}</span></div></td>
+        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${m.n}</span>${nb}</div></td>
       <td style="color:var(--t3);font-size:11px">${m.p}</td>
       <td style="color:var(--t3);font-size:11px">${unitLabel}</td>
       <td class="tdr" style="font-family:var(--mono);color:var(--t3)">${vFmtC(minP)}</td>
       <td class="tdr" style="font-family:var(--mono);color:var(--t3)">${vFmtC(maxP)}</td>
-      <td class="tdr" style="font-family:var(--mono);font-weight:700">${vFmtC(priceC)}</td></tr>`;
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${vFmtC(priceC)}</td>
+      <td class="tdr" style="font-family:var(--mono);font-weight:700;color:#a855f7">${vFmtC(total)}</td>
+      <td class="tdr">${cmp}</td></tr>`;
   }).join("");
 }
 function vRender(){rVList();rVConfig();rVCards();rVTable();}
@@ -756,7 +763,7 @@ const EM=[
   {id:"qwen3-reranker-8b",n:"qwen3-reranker-8b",p:"Qwen",c:"CNY",type:"Rerank",unit:"K",price:0.5,r:"国内版"},
   {id:"moe-1",n:"text-embedding-3-small",p:"OpenAI",c:"USD",type:"Embedding",unit:"M",price:0.02,r:"国内版"},
 ];
-let ES={tokens:1};
+let ES={tokens:1,sel:"qwen3-embedding-8b"};
 function eUpd(){
   ES.tokens=Math.max(0.001,parseFloat(document.getElementById("ET_I").value)||1);
   document.getElementById("ET_S").value=Math.min(ES.tokens,100);
@@ -766,16 +773,22 @@ function eUpd(){
 function eRender(){
   if(!document.getElementById("ET_BODY")) return;
   const filEM=EM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  // 计算当前选中模型（第一个或 ES.sel）的成本作为基准
+  const baseM=filEM.find(m=>m.id===ES.sel)||filEM[0];
+  const calcCost=m=>m.unit==="M"?m.price*ES.tokens*(m.c==="USD"?R:1):m.price*ES.tokens*1000*(m.c==="USD"?R:1);
+  const baseCost=baseM?calcCost(baseM):1;
   document.getElementById("ET_BODY").innerHTML=filEM.map(m=>{
-    let cost;
-    if(m.unit==="M") cost=m.price*ES.tokens*(m.c==="USD"?R:1);
-    else cost=m.price*ES.tokens*1000*(m.c==="USD"?R:1);
-    return`<tr>
-      <td>${m.n}</td>
+    const cost=calcCost(m);
+    const cur=baseM&&m.id===baseM.id;
+    const ratio=baseCost>0?cost/baseCost:1;
+    const cmp=cur?`<span class="ceq">—</span>`:ratio<1?`<span class="cdn">↓${((1-ratio)*100).toFixed(0)}%</span>`:`<span class="cup">↑${((ratio-1)*100).toFixed(0)}%</span>`;
+    return`<tr class="${cur?"hi":""}">
+      <td>${m.n}${cur?` <span class="nb2" style="background:#6c63ff22;color:#6c63ff">当前</span>`:""}</td>
       <td style="color:var(--t3);font-size:11px">${m.p}</td>
       <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:var(--b2);color:var(--t3)">${m.type}</span></td>
       <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">${m.c==="USD"?"$"+m.price+"/M tok":"¥"+m.price+"/"+m.unit+" tok"}</td>
       <td class="tdr" style="font-family:var(--mono);font-weight:700">¥${cost>=1?cost.toFixed(2):cost.toFixed(4)}</td>
+      <td class="tdr">${cmp}</td>
     </tr>`;
   }).join("");
 }
@@ -828,6 +841,8 @@ function visRender(){
   ].map(cd=>`<div class="cc" style="--ca:${cd.ca}">
     <div class="cct"><div><div class="ccl">${cd.label}</div><div class="ccs">${cd.sub}</div></div><div class="cci">${cd.icon}</div></div>
     <div class="ccm">${fmt(cd.v)}</div></div>`).join("");
+  const curVIS=VIM.find(x=>x.id===VISS.sel)||filVIM[0];
+  const baseTcVIS=curVIS?(curVIS.i*VISS.inM*(curVIS.c==="USD"?R:1))+(curVIS.o*VISS.outM*(curVIS.c==="USD"?R:1)):1;
   document.getElementById("VIS_BODY").innerHTML=filVIM.map(m=>{
     const pal=VISPAL[m.p]||{a:"#888"};
     const ic=m.i*VISS.inM*(m.c==="USD"?R:1);
@@ -835,13 +850,17 @@ function visRender(){
     const tc=ic+oc;
     const cur=m.id===VISS.sel;
     const fmt=v=>v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
+    const ratio=baseTcVIS>0?tc/baseTcVIS:1;
+    const cmp=cur?`<span class="ceq">—</span>`:ratio<1?`<span class="cdn">↓${((1-ratio)*100).toFixed(0)}%</span>`:`<span class="cup">↑${((ratio-1)*100).toFixed(0)}%</span>`;
+    const nb=cur?`<span class="nb2" style="background:${pal.a}22;color:${pal.a}">当前</span>`:"";
     return`<tr class="${cur?"hi":""}" onclick="visSel('${m.id}')">
       <td><div class="tdm"><div class="mdot" style="background:${pal.a}"></div>
-        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${m.n}</span></div></td>
+        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${m.n}</span>${nb}</div></td>
       <td style="color:var(--t3);font-size:11px">${m.p}</td>
       <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">¥${m.i}/M</td>
       <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">¥${m.o}/M</td>
-      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(tc)}</td></tr>`;
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(tc)}</td>
+      <td class="tdr">${cmp}</td></tr>`;
   }).join("");
 }
 function visSel(id){VISS.sel=id;visRender();}
@@ -908,7 +927,8 @@ function imgRender(){
       <td style="color:var(--t3);font-size:11px">${m.p}</td>
       <td style="color:var(--t3);font-size:11px">${cv.label}</td>
       <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">${priceLabel}</td>
-      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(totalC)}</td></tr>`;
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(totalC)}</td>
+      <td class="tdr">${(()=>{const baseM=IM.find(x=>x.id===IS.sel)||filIM[0];const baseV=baseM.variants.find(v=>v.k===IS.vk)||baseM.variants[0];const baseTotal=(baseM.c==="USD"?baseV.price*R:baseV.price)*IS.count;const ratio=baseTotal>0?totalC/baseTotal:1;return cur?`<span class="ceq">—</span>`:ratio<1?`<span class="cdn">↓${((1-ratio)*100).toFixed(0)}%</span>`:`<span class="cup">↑${((ratio-1)*100).toFixed(0)}%</span>`;})()}</td></tr>`;
   }).join("");
 }
 
@@ -928,14 +948,20 @@ function spUpd(){
 function spRender(){
   if(!document.getElementById("SP_BODY")) return;
   const filSM=SM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  const baseSM=filSM[0];
+  const baseCostSP=baseSM?baseSM.price*SPS.chars*R:1;
   document.getElementById("SP_BODY").innerHTML=filSM.map(m=>{
     const cost=m.price*SPS.chars*R;
     const fmt=v=>v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
-    return`<tr>
-      <td>${m.n}</td>
+    const cur=m.id===filSM[0]?.id;
+    const ratio=baseCostSP>0?cost/baseCostSP:1;
+    const cmp=cur?`<span class="ceq">—</span>`:ratio<1?`<span class="cdn">↓${((1-ratio)*100).toFixed(0)}%</span>`:`<span class="cup">↑${((ratio-1)*100).toFixed(0)}%</span>`;
+    return`<tr class="${cur?"hi":""}">
+      <td>${m.n}${cur?` <span class="nb2" style="background:#6c63ff22;color:#6c63ff">当前</span>`:""}</td>
       <td style="color:var(--t3);font-size:11px">${m.p}</td>
       <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">$${m.price}/千字</td>
       <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(cost)}</td>
+      <td class="tdr">${cmp}</td>
     </tr>`;
   }).join("");
 }
