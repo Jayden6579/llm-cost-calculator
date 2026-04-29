@@ -182,8 +182,8 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
 <div id="TAB_VIDEO_WRAP" style="display:none"><div class="pg">
   <div class="sec" style="display:grid;grid-template-columns:210px 1fr;gap:13px">
     <div class="card" style="padding:0;overflow:hidden">
-      <div style="padding:10px 14px 8px;border-bottom:1px solid var(--b1)"><div class="ch" style="margin-bottom:0">视频/图片模型</div></div>
-      <div style="overflow-y:auto;max-height:500px;padding:8px" id="VM_LIST"></div>
+      <div style="overflow-y:auto;padding:6px 0" id="VSB"></div>
+      <div style="overflow-y:auto;max-height:420px;padding:8px;border-top:1px solid var(--b1)" id="VM_LIST"></div>
     </div>
     <div>
       <div class="card" style="margin-bottom:13px">
@@ -245,8 +245,8 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
 <div id="TAB_VISION_WRAP" style="display:none"><div class="pg">
   <div class="sec" style="display:grid;grid-template-columns:220px 1fr;gap:13px">
     <div class="card" style="padding:0;overflow:hidden">
-      <div style="padding:10px 14px 8px;border-bottom:1px solid var(--b1)"><div class="ch" style="margin-bottom:0">视觉理解模型</div></div>
-      <div style="overflow-y:auto;max-height:500px;padding:8px" id="VIS_LIST"></div>
+      <div style="overflow-y:auto;padding:6px 0" id="VISSB"></div>
+      <div style="overflow-y:auto;max-height:420px;padding:8px;border-top:1px solid var(--b1)" id="VIS_LIST"></div>
     </div>
     <div>
       <div class="card" style="margin-bottom:13px">
@@ -282,8 +282,8 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
 <div id="TAB_IMAGE_WRAP" style="display:none"><div class="pg">
   <div class="sec" style="display:grid;grid-template-columns:210px 1fr;gap:13px">
     <div class="card" style="padding:0;overflow:hidden">
-      <div style="padding:10px 14px 8px;border-bottom:1px solid var(--b1)"><div class="ch" style="margin-bottom:0">图片生成模型</div></div>
-      <div style="overflow-y:auto;max-height:500px;padding:8px" id="IM_LIST"></div>
+      <div style="overflow-y:auto;padding:6px 0" id="IMSB"></div>
+      <div style="overflow-y:auto;max-height:420px;padding:8px;border-top:1px solid var(--b1)" id="IM_LIST"></div>
     </div>
     <div>
       <div class="card" style="margin-bottom:13px">
@@ -628,7 +628,7 @@ const VM=[
   {id:"mgv-1",n:"veo-3.1-generate-preview",p:"Google",c:"USD",r:"国内版",unit:"5s",variants:[{k:"std",label:"Std (720p/1080p)",ps:2.0},{k:"pro",label:"Pro (4K)",ps:3.0}]},
   {id:"wan2.6-i2v",n:"wan2.6-i2v",p:"Qwen",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std",label:"Std (720p)",ps:3.0},{k:"pro",label:"Pro (1080p)",ps:5.0}]},
 ];
-let VS={sel:"kling-v3",vk:"pro-snd",count:10,secs:5};
+let VS={sel:"kling-v3",vk:"pro-snd",count:10,secs:5,fp:"ALL"};
 function vCalcOne(m,vk,secs){
   const v=m.variants.find(x=>x.k===vk)||m.variants[0];
   let price;
@@ -642,16 +642,37 @@ function vCalcOne(m,vk,secs){
 }
 function vFmtC(c){return c>=10000?"\u00a5"+(c/10000).toFixed(2)+"\u4e07":c>=1?"\u00a5"+c.toFixed(2):"\u00a5"+c.toFixed(4);}
 function vFmtU(u){return u>=1000?"$"+(u/1000).toFixed(2)+"K":u>=1?"$"+u.toFixed(2):"$"+u.toFixed(4);}
+
+// ===== 通用供应商筛选条（带数量）=====
+function rSidebar(containerId, models, selProp, selVal, onClickFn, palObj){
+  const el=document.getElementById(containerId); if(!el)return;
+  const allCnt=models.length;
+  const ps=[...new Set(models.map(m=>m.p))];
+  const isCurAll=!selVal||selVal==="ALL";
+  const allOn=isCurAll;
+  el.innerHTML=`<button class="sbtn${allOn?" on":""}" style="${allOn?"color:var(--t1)":""}" onclick="${onClickFn}('ALL')">
+    <span class="sdot2" style="background:var(--t3)"></span>全部<span class="sct">${allCnt}</span></button>`+
+  ps.map(p=>{
+    const pal=palObj[p]||{a:"#888"};
+    const cnt=models.filter(m=>m.p===p).length;
+    const on=selVal===p;
+    return`<button class="sbtn${on?" on":""}" style="${on?`color:${pal.a};background:rgba(${hexToRgb(pal.a)},.12)`:""}" onclick="${onClickFn}('${p}')">
+      <span class="sdot2" style="background:${pal.a}"></span>${p}<span class="sct">${cnt}</span></button>`;
+  }).join("");
+}
+function setFV(p){VS.fp=p;vRender();}
 function rVList(){
   const filVM=VM.filter(m=>S.fv==="全部"||m.r===S.fv);
   if(!filVM.find(m=>m.id===VS.sel)&&filVM.length){VS.sel=filVM[0].id;VS.vk=filVM[0].variants[0].k;}
+  rSidebar("VSB",filVM,"fp",VS.fp==="ALL"?null:VS.fp,"setFV",VPAL);
+  const dispVM=VS.fp==="ALL"?filVM:filVM.filter(m=>m.p===VS.fp);
   const curM=VM.find(x=>x.id===VS.sel)||filVM[0];
   const isFixed=curM&&curM.unit==="fixed";
   const cv=curM&&(curM.variants.find(x=>x.k===VS.vk)||curM.variants[0]);
   const effSecs=curM?(isFixed?cv.dur:VS.secs):5;
   const ps=["可灵AI","Minimax","Google","Qwen"];
   document.getElementById("VM_LIST").innerHTML=ps.map(p=>{
-    const ms=filVM.filter(m=>m.p===p);if(!ms.length)return"";
+    const ms=dispVM.filter(m=>m.p===p);if(!ms.length)return"";
     const pal=VPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
@@ -812,7 +833,7 @@ const VIM=[
   {id:"hunyuan-t1-vision",n:"hunyuan-t1-vision-20250916",p:"腾讯",c:"CNY",i:3,o:9,r:"国内版"},
   {id:"hunyuan-vision-1.5",n:"hunyuan-vision-1.5-instruct",p:"腾讯",c:"CNY",i:3,o:9,r:"国内版"},
 ];
-let VISS={sel:"qwen3-vl-plus",inM:1,outM:0.2};
+let VISS={sel:"qwen3-vl-plus",inM:1,outM:0.2,fp:"ALL"};
 function visUpd(){
   VISS.inM=Math.max(0.001,parseFloat(document.getElementById("VI_I").value)||1);
   VISS.outM=Math.max(0.001,parseFloat(document.getElementById("VO_I").value)||0.2);
@@ -820,13 +841,16 @@ function visUpd(){
   document.getElementById("VO_D").textContent=VISS.outM+"M";
   visRender();
 }
+function setFVIS(p){VISS.fp=p;visRender();}
 function visRender(){
   if(!document.getElementById("VIS_LIST")) return;
   const filVIM=VIM.filter(m=>S.fv==="全部"||m.r===S.fv);
   if(!filVIM.find(m=>m.id===VISS.sel)&&filVIM.length) VISS.sel=filVIM[0].id;
+  rSidebar("VISSB",filVIM,"fp",VISS.fp==="ALL"?null:VISS.fp,"setFVIS",VISPAL);
+  const dispVIM=VISS.fp==="ALL"?filVIM:filVIM.filter(m=>m.p===VISS.fp);
   const ps=["Qwen","腾讯"];
   document.getElementById("VIS_LIST").innerHTML=ps.map(p=>{
-    const ms=filVIM.filter(m=>m.p===p);if(!ms.length)return"";
+    const ms=dispVIM.filter(m=>m.p===p);if(!ms.length)return"";
     const pal=VISPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
@@ -881,7 +905,7 @@ const IMPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,
   {id:"kling-v3-img",n:"kling-v3",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.3}]},
   {id:"kling-v3-omni-img",n:"kling-v3-omni",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k",label:"1k 规格",price:0.2},{k:"2k",label:"2k 规格",price:0.2},{k:"4k",label:"4k 规格",price:0.4}]},
 ];
-let IS={sel:"kling-v3-img",vk:"1k2k",count:100};
+let IS={sel:"kling-v3-img",vk:"1k2k",count:100,fp:"ALL"};
 
 function imgUpd(){
   IS.count=Math.max(1,parseInt(document.getElementById("IN_I").value)||100);
@@ -891,13 +915,16 @@ function imgUpd(){
 }
 function imgSelM(id){IS.sel=id;const m=IM.find(x=>x.id===id);IS.vk=m.variants[0].k;imgRender();}
 function imgSelVar(k){IS.vk=k;imgRender();}
+function setFIM(p){IS.fp=p;imgRender();}
 function imgRender(){
   if(!document.getElementById("IM_LIST")) return;
   const filIM=IM.filter(m=>S.fv==="全部"||m.r===S.fv);
   if(!filIM.find(m=>m.id===IS.sel)&&filIM.length){IS.sel=filIM[0].id;IS.vk=filIM[0].variants[0].k;}
+  rSidebar("IMSB",filIM,"fp",IS.fp==="ALL"?null:IS.fp,"setFIM",IMPAL);
+  const dispIM=IS.fp==="ALL"?filIM:filIM.filter(m=>m.p===IS.fp);
   const ps=["可灵AI"];
   document.getElementById("IM_LIST").innerHTML=ps.map(p=>{
-    const ms=filIM.filter(m=>m.p===p);if(!ms.length)return"";
+    const ms=dispIM.filter(m=>m.p===p);if(!ms.length)return"";
     const pal=IMPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
