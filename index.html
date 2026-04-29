@@ -114,7 +114,7 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
     <button id="TAB_BTN_IMAGE" onclick="setTab('image')">🖼 图片</button>
     <button id="TAB_BTN_SPEECH" onclick="setTab('speech')">🔊 语音</button>
   </div>
-  <div class="nr" id="NR_TEXT">
+  <div class="nr">
     <div class="tog" id="VT" style="padding:2px;gap:1px">
       <button onclick="setVer('全部')">全部</button>
       <button class="on" onclick="setVer('国内版')">🇨🇳 国内</button>
@@ -610,21 +610,22 @@ function setVer(v){
   const vis=fil();
   if(!vis.find(m=>m.id===S.sel))S.sel=vis[0]?.id||M[0].id;
   render();
+  vRender();eRender();visRender();imgRender();spRender();
 }
 function setC(c){S.cur=c;document.querySelectorAll("#CT button").forEach((b,i)=>b.className=((c==="USD"&&i===0)||(c==="CNY"&&i===1))?"on":"");render();}
 // ===== 视频/图片 Tab =====
 const VPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,53,.16)"},Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"},Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},Minimax:{a:"#f97316",bg:"rgba(249,115,22,.08)",ch:"rgba(249,115,22,.16)"}};
 const VM=[
-  {id:"kling-v3",n:"kling-v3",p:"可灵AI",c:"CNY",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.9},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.2}]},
-  {id:"kling-v3-omni",n:"kling-v3-omni",p:"可灵AI",c:"CNY",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.8},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.0}]},
-  {id:"kling-v2-6",n:"kling-v2-6",p:"可灵AI",c:"CNY",unit:"5s",variants:[{k:"std-sil",label:"Std · 无声",ps:1.5},{k:"std-act",label:"Std · 动作控制",ps:2.5},{k:"pro-sil",label:"Pro · 无声",ps:2.5},{k:"pro-snd",label:"Pro · 有声",ps:5.0},{k:"pro-snd-v",label:"Pro · 有声·指定音色",ps:6.0}]},
-  {id:"kling-video-o1",n:"kling-video-o1",p:"可灵AI",c:"CNY",unit:"5s",variants:[{k:"std-no-ref",label:"Std · 无参考",ps:3.0},{k:"pro-no-ref",label:"Pro · 无参考",ps:4.0},{k:"std-ref",label:"Std · 参考视频",ps:4.5},{k:"pro-ref",label:"Pro · 参考视频",ps:6.0}]},
-  {id:"kling-v2-1-master",n:"kling-v2-1-master",p:"可灵AI",c:"CNY",unit:"5s",variants:[{k:"std",label:"标准",ps:10.0}]},
-  {id:"hailuo-2.3",n:"hailuo-2.3",p:"Minimax",c:"CNY",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
-  {id:"hailuo-2.3-fast",n:"hailuo-2.3-fast",p:"Minimax",c:"CNY",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:1.35,dur:6},{k:"768p-10s",label:"768p · 10s",price:2.25,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:2.31,dur:6}]},
-  {id:"hailuo-02",n:"hailuo-02",p:"Minimax",c:"CNY",unit:"fixed",variants:[{k:"512p-6s",label:"512p · 6s",price:0.6,dur:6},{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
-  {id:"mgv-1",n:"veo-3.1-generate-preview",p:"Google",c:"USD",unit:"5s",variants:[{k:"std",label:"Std (720p/1080p)",ps:2.0},{k:"pro",label:"Pro (4K)",ps:3.0}]},
-  {id:"wan2.6-i2v",n:"wan2.6-i2v",p:"Qwen",c:"CNY",unit:"5s",variants:[{k:"std",label:"Std (720p)",ps:3.0},{k:"pro",label:"Pro (1080p)",ps:5.0}]},
+  {id:"kling-v3",n:"kling-v3",p:"可灵AI",c:"CNY",r:"国内版",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.9},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.2}]},
+  {id:"kling-v3-omni",n:"kling-v3-omni",p:"可灵AI",c:"CNY",r:"国内版",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.8},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.0}]},
+  {id:"kling-v2-6",n:"kling-v2-6",p:"可灵AI",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std-sil",label:"Std · 无声",ps:1.5},{k:"std-act",label:"Std · 动作控制",ps:2.5},{k:"pro-sil",label:"Pro · 无声",ps:2.5},{k:"pro-snd",label:"Pro · 有声",ps:5.0},{k:"pro-snd-v",label:"Pro · 有声·指定音色",ps:6.0}]},
+  {id:"kling-video-o1",n:"kling-video-o1",p:"可灵AI",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std-no-ref",label:"Std · 无参考",ps:3.0},{k:"pro-no-ref",label:"Pro · 无参考",ps:4.0},{k:"std-ref",label:"Std · 参考视频",ps:4.5},{k:"pro-ref",label:"Pro · 参考视频",ps:6.0}]},
+  {id:"kling-v2-1-master",n:"kling-v2-1-master",p:"可灵AI",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std",label:"标准",ps:10.0}]},
+  {id:"hailuo-2.3",n:"hailuo-2.3",p:"Minimax",c:"CNY",r:"国内版",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
+  {id:"hailuo-2.3-fast",n:"hailuo-2.3-fast",p:"Minimax",c:"CNY",r:"国内版",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:1.35,dur:6},{k:"768p-10s",label:"768p · 10s",price:2.25,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:2.31,dur:6}]},
+  {id:"hailuo-02",n:"hailuo-02",p:"Minimax",c:"CNY",r:"国内版",unit:"fixed",variants:[{k:"512p-6s",label:"512p · 6s",price:0.6,dur:6},{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
+  {id:"mgv-1",n:"veo-3.1-generate-preview",p:"Google",c:"USD",r:"国内版",unit:"5s",variants:[{k:"std",label:"Std (720p/1080p)",ps:2.0},{k:"pro",label:"Pro (4K)",ps:3.0}]},
+  {id:"wan2.6-i2v",n:"wan2.6-i2v",p:"Qwen",c:"CNY",r:"国内版",unit:"5s",variants:[{k:"std",label:"Std (720p)",ps:3.0},{k:"pro",label:"Pro (1080p)",ps:5.0}]},
 ];
 let VS={sel:"kling-v3",vk:"pro-snd",count:10,secs:5};
 function vCalcOne(m,vk,secs){
@@ -641,9 +642,11 @@ function vCalcOne(m,vk,secs){
 function vFmtC(c){return c>=10000?"\u00a5"+(c/10000).toFixed(2)+"\u4e07":c>=1?"\u00a5"+c.toFixed(2):"\u00a5"+c.toFixed(4);}
 function vFmtU(u){return u>=1000?"$"+(u/1000).toFixed(2)+"K":u>=1?"$"+u.toFixed(2):"$"+u.toFixed(4);}
 function rVList(){
+  const filVM=VM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  if(!filVM.find(m=>m.id===VS.sel)&&filVM.length){VS.sel=filVM[0].id;VS.vk=filVM[0].variants[0].k;}
   const ps=["可灵AI","Minimax","Google","Qwen"];
   document.getElementById("VM_LIST").innerHTML=ps.map(p=>{
-    const ms=VM.filter(m=>m.p===p);if(!ms.length)return"";
+    const ms=filVM.filter(m=>m.p===p);if(!ms.length)return"";
     const pal=VPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
@@ -691,11 +694,12 @@ function rVCards(){
     <div class="ccm">${vFmtC(cd.vc)}</div><div class="cca">${vFmtU(cd.vu)}</div></div>`).join("");
 }
 function rVTable(){
-  const curM=VM.find(x=>x.id===VS.sel);
+  const filVM=VM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  const curM=VM.find(x=>x.id===VS.sel)||filVM[0];
   const isFixed=curM.unit==="fixed";
   const cv=curM.variants.find(x=>x.k===VS.vk)||curM.variants[0];
   const effSecs=isFixed?cv.dur:VS.secs;
-  document.getElementById("VT_BODY").innerHTML=VM.map(m=>{
+  document.getElementById("VT_BODY").innerHTML=filVM.map(m=>{
     const pal=VPAL[m.p]||{a:"#888"};
     const prices=m.variants.map(v=>{
       const s=m.unit==="USD"?R:1;
@@ -737,7 +741,6 @@ function setTab(t){
     const w=document.getElementById("TAB_"+id.toUpperCase()+"_WRAP");
     if(w) w.style.display=t===id?"block":"none";
   });
-  document.getElementById("NR_TEXT").style.display=t==="text"?"flex":"none";
   document.querySelectorAll("#MAINTABT button").forEach(b=>{b.className=b.id==="TAB_BTN_"+t.toUpperCase()?"on":"";});
   if(t==="video") vRender();
   if(t==="embed") eRender();
@@ -748,9 +751,9 @@ function setTab(t){
 
 // ===== Embedding & Rerank =====
 const EM=[
-  {id:"qwen3-embedding-8b",n:"qwen3-embedding-8b",p:"Qwen",c:"CNY",type:"Embedding",unit:"M",price:0.5},
-  {id:"qwen3-reranker-8b",n:"qwen3-reranker-8b",p:"Qwen",c:"CNY",type:"Rerank",unit:"K",price:0.5},
-  {id:"moe-1",n:"text-embedding-3-small",p:"OpenAI",c:"USD",type:"Embedding",unit:"M",price:0.02},
+  {id:"qwen3-embedding-8b",n:"qwen3-embedding-8b",p:"Qwen",c:"CNY",type:"Embedding",unit:"M",price:0.5,r:"国内版"},
+  {id:"qwen3-reranker-8b",n:"qwen3-reranker-8b",p:"Qwen",c:"CNY",type:"Rerank",unit:"K",price:0.5,r:"国内版"},
+  {id:"moe-1",n:"text-embedding-3-small",p:"OpenAI",c:"USD",type:"Embedding",unit:"M",price:0.02,r:"国内版"},
 ];
 let ES={tokens:1};
 function eUpd(){
@@ -761,7 +764,8 @@ function eUpd(){
 }
 function eRender(){
   if(!document.getElementById("ET_BODY")) return;
-  document.getElementById("ET_BODY").innerHTML=EM.map(m=>{
+  const filEM=EM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  document.getElementById("ET_BODY").innerHTML=filEM.map(m=>{
     let cost;
     if(m.unit==="M") cost=m.price*ES.tokens*(m.c==="USD"?R:1);
     else cost=m.price*ES.tokens*1000*(m.c==="USD"?R:1);
@@ -778,13 +782,13 @@ function eRender(){
 // ===== 视觉理解 =====
 const VISPAL={Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},"腾讯":{a:"#0099ff",bg:"rgba(0,153,255,.08)",ch:"rgba(0,153,255,.16)"}};
 const VIM=[
-  {id:"qwen3-vl-plus",n:"qwen3-vl-plus",p:"Qwen",c:"CNY",i:1,o:6},
-  {id:"qwen3-vl-235b-instruct",n:"qwen3-vl-235b-a22b-instruct",p:"Qwen",c:"CNY",i:2,o:8},
-  {id:"qwen3-vl-235b-thinking",n:"qwen3-vl-235b-a22b-thinking",p:"Qwen",c:"CNY",i:2,o:20},
-  {id:"qwen3-vl-30b",n:"qwen3-vl-30b-a3b-instruct",p:"Qwen",c:"CNY",i:0.75,o:3},
-  {id:"qwen3-vl-flash",n:"qwen3-vl-flash",p:"Qwen",c:"CNY",i:0.15,o:1.5},
-  {id:"hunyuan-t1-vision",n:"hunyuan-t1-vision-20250916",p:"腾讯",c:"CNY",i:3,o:9},
-  {id:"hunyuan-vision-1.5",n:"hunyuan-vision-1.5-instruct",p:"腾讯",c:"CNY",i:3,o:9},
+  {id:"qwen3-vl-plus",n:"qwen3-vl-plus",p:"Qwen",c:"CNY",i:1,o:6,r:"国内版"},
+  {id:"qwen3-vl-235b-instruct",n:"qwen3-vl-235b-a22b-instruct",p:"Qwen",c:"CNY",i:2,o:8,r:"国内版"},
+  {id:"qwen3-vl-235b-thinking",n:"qwen3-vl-235b-a22b-thinking",p:"Qwen",c:"CNY",i:2,o:20,r:"国内版"},
+  {id:"qwen3-vl-30b",n:"qwen3-vl-30b-a3b-instruct",p:"Qwen",c:"CNY",i:0.75,o:3,r:"国内版"},
+  {id:"qwen3-vl-flash",n:"qwen3-vl-flash",p:"Qwen",c:"CNY",i:0.15,o:1.5,r:"国内版"},
+  {id:"hunyuan-t1-vision",n:"hunyuan-t1-vision-20250916",p:"腾讯",c:"CNY",i:3,o:9,r:"国内版"},
+  {id:"hunyuan-vision-1.5",n:"hunyuan-vision-1.5-instruct",p:"腾讯",c:"CNY",i:3,o:9,r:"国内版"},
 ];
 let VISS={sel:"qwen3-vl-plus",inM:1,outM:0.2};
 function visUpd(){
@@ -796,9 +800,11 @@ function visUpd(){
 }
 function visRender(){
   if(!document.getElementById("VIS_LIST")) return;
+  const filVIM=VIM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  if(!filVIM.find(m=>m.id===VISS.sel)&&filVIM.length) VISS.sel=filVIM[0].id;
   const ps=["Qwen","腾讯"];
   document.getElementById("VIS_LIST").innerHTML=ps.map(p=>{
-    const ms=VIM.filter(m=>m.p===p);if(!ms.length)return"";
+    const ms=filVIM.filter(m=>m.p===p);if(!ms.length)return"";
     const pal=VISPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
@@ -821,7 +827,7 @@ function visRender(){
   ].map(cd=>`<div class="cc" style="--ca:${cd.ca}">
     <div class="cct"><div><div class="ccl">${cd.label}</div><div class="ccs">${cd.sub}</div></div><div class="cci">${cd.icon}</div></div>
     <div class="ccm">${fmt(cd.v)}</div></div>`).join("");
-  document.getElementById("VIS_BODY").innerHTML=VIM.map(m=>{
+  document.getElementById("VIS_BODY").innerHTML=filVIM.map(m=>{
     const pal=VISPAL[m.p]||{a:"#888"};
     const ic=m.i*VISS.inM*(m.c==="USD"?R:1);
     const oc=m.o*VISS.outM*(m.c==="USD"?R:1);
@@ -842,16 +848,16 @@ function visSel(id){VISS.sel=id;visRender();}
 // ===== 图片生成 =====
 const IMPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,53,.16)"},Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},"豆包":{a:"#00bcd4",bg:"rgba(0,188,212,.08)",ch:"rgba(0,188,212,.16)"},Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"}};
 const IM=[
-  {id:"kling-v3-img",n:"kling-v3",p:"可灵AI",c:"CNY",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.3},{k:"4k",label:"4k 规格",price:0.6}]},
-  {id:"kling-v3-omni-img",n:"kling-v3-omni",p:"可灵AI",c:"CNY",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.2},{k:"4k",label:"4k 规格",price:0.4}]},
-  {id:"wan2.6-t2i",n:"wan2.6-t2i",p:"Qwen",c:"CNY",variants:[{k:"std",label:"文生图",price:0.2}]},
-  {id:"doubao-seedream-4.5",n:"doubao-seedream-4.5",p:"豆包",c:"CNY",variants:[{k:"t2i",label:"文生图",price:0.25},{k:"i2i",label:"图生图",price:0.25}]},
-  {id:"mgg-9",n:"gemini-3.1-flash-image",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.5}]},
-  {id:"mgg-5",n:"gemini-2.5-flash-image",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.3}]},
-  {id:"mgg-6",n:"gemini-3-pro-image",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:2.0}]},
-  {id:"mgg-9-global",n:"gemini-3.1-flash-image (国际)",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.5}]},
-  {id:"mgg-5-global",n:"gemini-2.5-flash-image (国际)",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.3}]},
-  {id:"mgg-6-global",n:"gemini-3-pro-image (国际)",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:2.0}]},
+  {id:"kling-v3-img",n:"kling-v3",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.3},{k:"4k",label:"4k 规格",price:0.6}]},
+  {id:"kling-v3-omni-img",n:"kling-v3-omni",p:"可灵AI",c:"CNY",r:"国内版",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.2},{k:"4k",label:"4k 规格",price:0.4}]},
+  {id:"wan2.6-t2i",n:"wan2.6-t2i",p:"Qwen",c:"CNY",r:"国内版",variants:[{k:"std",label:"文生图",price:0.2}]},
+  {id:"doubao-seedream-4.5",n:"doubao-seedream-4.5",p:"豆包",c:"CNY",r:"国内版",variants:[{k:"t2i",label:"文生图",price:0.25},{k:"i2i",label:"图生图",price:0.25}]},
+  {id:"mgg-9",n:"gemini-3.1-flash-image",p:"Google",c:"USD",r:"国内版",variants:[{k:"std",label:"标准",price:0.5}]},
+  {id:"mgg-5",n:"gemini-2.5-flash-image",p:"Google",c:"USD",r:"国内版",variants:[{k:"std",label:"标准",price:0.3}]},
+  {id:"mgg-6",n:"gemini-3-pro-image",p:"Google",c:"USD",r:"国内版",variants:[{k:"std",label:"标准",price:2.0}]},
+  {id:"mgg-9-global",n:"gemini-3.1-flash-image (国际)",p:"Google",c:"USD",r:"国际版",variants:[{k:"std",label:"标准",price:0.5}]},
+  {id:"mgg-5-global",n:"gemini-2.5-flash-image (国际)",p:"Google",c:"USD",r:"国际版",variants:[{k:"std",label:"标准",price:0.3}]},
+  {id:"mgg-6-global",n:"gemini-3-pro-image (国际)",p:"Google",c:"USD",r:"国际版",variants:[{k:"std",label:"标准",price:2.0}]},
 ];
 let IS={sel:"kling-v3-img",vk:"1k2k",count:100};
 function imgUpd(){
@@ -864,9 +870,11 @@ function imgSelM(id){IS.sel=id;const m=IM.find(x=>x.id===id);IS.vk=m.variants[0]
 function imgSelVar(k){IS.vk=k;imgRender();}
 function imgRender(){
   if(!document.getElementById("IM_LIST")) return;
+  const filIM=IM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  if(!filIM.find(m=>m.id===IS.sel)&&filIM.length){IS.sel=filIM[0].id;IS.vk=filIM[0].variants[0].k;}
   const ps=["可灵AI","Qwen","豆包","Google"];
   document.getElementById("IM_LIST").innerHTML=ps.map(p=>{
-    const ms=IM.filter(m=>m.p===p);if(!ms.length)return"";
+    const ms=filIM.filter(m=>m.p===p);if(!ms.length)return"";
     const pal=IMPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
@@ -893,7 +901,7 @@ function imgRender(){
   ].map(cd=>`<div class="cc" style="--ca:${cd.ca}">
     <div class="cct"><div><div class="ccl">${cd.label}</div><div class="ccs">${cd.sub}</div></div><div class="cci">${cd.icon}</div></div>
     <div class="ccm">${fmt(cd.v)}</div></div>`).join("");
-  document.getElementById("IT_BODY").innerHTML=IM.map(m=>{
+  document.getElementById("IT_BODY").innerHTML=filIM.map(m=>{
     const pal=IMPAL[m.p]||{a:"#888"};
     const cur=m.id===IS.sel;
     const cv=m.variants.find(v=>v.k===IS.vk)||m.variants[0];
@@ -913,9 +921,9 @@ function imgRender(){
 
 // ===== 语音生成 =====
 const SM=[
-  {id:"eleven-flash-v2",n:"eleven-flash-v2",p:"ElevenLabs",c:"USD",price:0.06},
-  {id:"eleven-flash-v2.5",n:"eleven-flash-v2.5",p:"ElevenLabs",c:"USD",price:0.06},
-  {id:"eleven-v3",n:"eleven-v3",p:"ElevenLabs",c:"USD",price:0.12},
+  {id:"eleven-flash-v2",n:"eleven-flash-v2",p:"ElevenLabs",c:"USD",r:"国内版",price:0.06},
+  {id:"eleven-flash-v2.5",n:"eleven-flash-v2.5",p:"ElevenLabs",c:"USD",r:"国内版",price:0.06},
+  {id:"eleven-v3",n:"eleven-v3",p:"ElevenLabs",c:"USD",r:"国内版",price:0.12},
 ];
 let SPS={chars:10};
 function spUpd(){
@@ -926,7 +934,8 @@ function spUpd(){
 }
 function spRender(){
   if(!document.getElementById("SP_BODY")) return;
-  document.getElementById("SP_BODY").innerHTML=SM.map(m=>{
+  const filSM=SM.filter(m=>S.fv==="全部"||m.r===S.fv);
+  document.getElementById("SP_BODY").innerHTML=filSM.map(m=>{
     const cost=m.price*SPS.chars*R;
     const fmt=v=>v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
     return`<tr>
