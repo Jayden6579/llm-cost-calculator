@@ -666,10 +666,6 @@ function rVList(){
   if(!filVM.find(m=>m.id===VS.sel)&&filVM.length){VS.sel=filVM[0].id;VS.vk=filVM[0].variants[0].k;}
   rSidebar("VSB",filVM,"fp",VS.fp==="ALL"?null:VS.fp,"setFV",VPAL);
   const dispVM=VS.fp==="ALL"?filVM:filVM.filter(m=>m.p===VS.fp);
-  const curM=VM.find(x=>x.id===VS.sel)||filVM[0];
-  const isFixed=curM&&curM.unit==="fixed";
-  const cv=curM&&(curM.variants.find(x=>x.k===VS.vk)||curM.variants[0]);
-  const effSecs=curM?(isFixed?cv.dur:VS.secs):5;
   const ps=["可灵AI","Minimax","Google","Qwen"];
   document.getElementById("VM_LIST").innerHTML=ps.map(p=>{
     const ms=dispVM.filter(m=>m.p===p);if(!ms.length)return"";
@@ -677,13 +673,9 @@ function rVList(){
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
       const on=m.id===VS.sel,style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
-      const{priceC}=vCalcOne(m,VS.vk,effSecs);
-      const totalC=priceC*VS.count;
-      const costStr=vFmtC(totalC);
       return`<div class="mrow${on?" on":""}"${style} onclick="vSelM('${m.id}')">
         <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
-        <span class="mrow-name" style="font-size:12px;flex:1">${m.n}</span>
-        <span style="font-size:11px;font-family:var(--mono);color:${on?pal.a:"var(--t3)"};font-weight:${on?700:400}">${costStr}</span>
+        <span class="mrow-name" style="font-size:12px">${m.n}</span>
       </div>`;
     }).join("")+"</div>";
   }).join("");
@@ -855,12 +847,9 @@ function visRender(){
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
       const on=m.id===VISS.sel,style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
-      const tc=(m.i*VISS.inM+m.o*VISS.outM)*(m.c==="USD"?R:1);
-      const costStr=tc>=10000?"¥"+(tc/10000).toFixed(1)+"万":tc>=1?"¥"+tc.toFixed(2):"¥"+tc.toFixed(4);
       return`<div class="mrow${on?" on":""}"${style} onclick="visSel('${m.id}')">
         <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
-        <span class="mrow-name" style="font-size:12px;flex:1">${m.n}</span>
-        <span style="font-size:11px;font-family:var(--mono);color:${on?pal.a:"var(--t3)"};font-weight:${on?700:400}">${costStr}</span></div>`;
+        <span class="mrow-name" style="font-size:12px">${m.n}</span></div>`;
     }).join("")+"</div>";
   }).join("");
   const m=VIM.find(x=>x.id===VISS.sel);
@@ -929,14 +918,9 @@ function imgRender(){
     return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
     ms.map(m=>{
       const on=m.id===IS.sel,style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
-      const cv=m.variants.find(v=>v.k===IS.vk)||m.variants[0];
-      const unitPrice=m.c==="USD"?cv.price*R:cv.price;
-      const totalC=unitPrice*IS.count;
-      const costStr=totalC>=10000?"¥"+(totalC/10000).toFixed(1)+"万":totalC>=1?"¥"+totalC.toFixed(2):"¥"+totalC.toFixed(4);
       return`<div class="mrow${on?" on":""}"${style} onclick="imgSelM('${m.id}')">
         <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
-        <span class="mrow-name" style="font-size:12px;flex:1">${m.n}</span>
-        <span style="font-size:11px;font-family:var(--mono);color:${on?pal.a:"var(--t3)"};font-weight:${on?700:400}">${costStr}</span></div>`;
+        <span class="mrow-name" style="font-size:12px">${m.n}</span></div>`;
     }).join("")+"</div>";
   }).join("");
   const m=IM.find(x=>x.id===IS.sel);
