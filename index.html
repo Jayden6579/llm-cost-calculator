@@ -106,7 +106,11 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   <div class="nl">$</div>
   <span class="nt">LLM Cost Calculator</span>
   <span class="ns">· AI 大模型成本分析</span>
-  <div class="nr">
+  <div class="tog" id="MAINTABT" style="margin-left:16px">
+    <button class="on" onclick="setTab('text')" id="TAB_BTN_TEXT">📊 文本模型</button>
+    <button onclick="setTab('video')" id="TAB_BTN_VIDEO">🎬 视频/图片</button>
+  </div>
+  <div class="nr" id="NR_TEXT">
     <div class="tog" id="VT" style="padding:2px;gap:1px">
       <button onclick="setVer('全部')">全部</button>
       <button class="on" onclick="setVer('国内版')">🇨🇳 国内</button>
@@ -119,7 +123,7 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
     <div class="sdot"><div class="dot"></div>2025 Q2</div>
   </div>
 </nav>
-<div class="pg">
+<div id="TAB_TEXT_WRAP"><div class="pg">
   <div class="sec"><div class="card" style="padding:0;overflow:hidden">
     <div style="display:flex;height:340px">
       <div id="SB" style="width:130px;flex-shrink:0;border-right:1px solid var(--b1);overflow-y:auto;padding:8px 0"></div>
@@ -170,7 +174,43 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
     </tr></thead><tbody id="TB"></tbody></table>
   </div>
   <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
-</div>
+</div></div><!-- end TAB_TEXT_WRAP -->
+<div id="TAB_VIDEO_WRAP" style="display:none"><div class="pg">
+  <div class="sec" style="display:grid;grid-template-columns:210px 1fr;gap:13px">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:10px 14px 8px;border-bottom:1px solid var(--b1)"><div class="ch" style="margin-bottom:0">视频/图片模型</div></div>
+      <div style="overflow-y:auto;max-height:500px;padding:8px" id="VM_LIST"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:13px">
+        <div class="ch">规格选择</div>
+        <div id="VM_VARIANTS" class="chips" style="margin-bottom:16px"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+          <div>
+            <div class="ph"><span class="pl">视频数量</span><span class="pv" id="VN_D" style="color:#6c63ff">10</span></div>
+            <div class="pi"><input type="text" id="VN_I" value="10" style="--tc:#6c63ff" oninput="vUpd()" onchange="vUpd()"><span class="pu">条</span></div>
+            <input type="range" id="VN_S" min="1" max="10000" step="1" value="10" style="--tc:#6c63ff" oninput="vUpd()">
+            <div class="rl"><span>1</span><span>100</span><span>1K</span><span>10K</span></div>
+          </div>
+          <div>
+            <div class="ph"><span class="pl">每条时长</span><span class="pv" id="VS_D" style="color:#1de9b6">5s</span></div>
+            <div class="pi"><input type="text" id="VS_I" value="5" style="--tc:#1de9b6" oninput="vUpd()" onchange="vUpd()"><span class="pu">秒</span></div>
+            <input type="range" id="VS_S" min="1" max="120" step="1" value="5" style="--tc:#1de9b6" oninput="vUpd()">
+            <div class="rl"><span>1s</span><span>10s</span><span>30s</span><span>120s</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="VC_CARDS"></div>
+    </div>
+  </div>
+  <div class="tw sec">
+    <div class="twh"><span class="twt">📋 视频模型价格对比</span><span class="twi">点击行切换模型</span></div>
+    <table><thead><tr>
+      <th>模型</th><th>供应商</th><th>计费单位</th><th class="r">最低单价</th><th class="r">最高单价</th><th class="r">当前成本/条</th>
+    </tr></thead><tbody id="VT_BODY"></tbody></table>
+  </div>
+  <div class="foot">视频/图片价格仅供参考，以各平台官方最新定价为准</div>
+</div></div><!-- end TAB_VIDEO_WRAP -->
 <script>
 const R=7.25,DB=1e10;
 const PAL={
@@ -452,5 +492,131 @@ function setVer(v){
   render();
 }
 function setC(c){S.cur=c;document.querySelectorAll("#CT button").forEach((b,i)=>b.className=((c==="USD"&&i===0)||(c==="CNY"&&i===1))?"on":"");render();}
+// ===== 视频/图片 Tab =====
+const VPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,53,.16)"},Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"},Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},Minimax:{a:"#f97316",bg:"rgba(249,115,22,.08)",ch:"rgba(249,115,22,.16)"}};
+const VM=[
+  {id:"kling-v3",n:"kling-v3",p:"可灵AI",c:"CNY",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.9},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.2}]},
+  {id:"kling-v3-omni",n:"kling-v3-omni",p:"可灵AI",c:"CNY",unit:"sec",variants:[{k:"std-sil",label:"Std · 无声",ps:0.6},{k:"std-snd",label:"Std · 有声",ps:0.8},{k:"pro-sil",label:"Pro · 无声",ps:0.8},{k:"pro-snd",label:"Pro · 有声",ps:1.0}]},
+  {id:"kling-v2-6",n:"kling-v2-6",p:"可灵AI",c:"CNY",unit:"5s",variants:[{k:"std-sil",label:"Std · 无声",ps:1.5},{k:"std-act",label:"Std · 动作控制",ps:2.5},{k:"pro-sil",label:"Pro · 无声",ps:2.5},{k:"pro-snd",label:"Pro · 有声",ps:5.0},{k:"pro-snd-v",label:"Pro · 有声·指定音色",ps:6.0}]},
+  {id:"kling-video-o1",n:"kling-video-o1",p:"可灵AI",c:"CNY",unit:"5s",variants:[{k:"std-no-ref",label:"Std · 无参考",ps:3.0},{k:"pro-no-ref",label:"Pro · 无参考",ps:4.0},{k:"std-ref",label:"Std · 参考视频",ps:4.5},{k:"pro-ref",label:"Pro · 参考视频",ps:6.0}]},
+  {id:"kling-v2-1-master",n:"kling-v2-1-master",p:"可灵AI",c:"CNY",unit:"5s",variants:[{k:"std",label:"标准",ps:10.0}]},
+  {id:"hailuo-2.3",n:"hailuo-2.3",p:"Minimax",c:"CNY",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
+  {id:"hailuo-2.3-fast",n:"hailuo-2.3-fast",p:"Minimax",c:"CNY",unit:"fixed",variants:[{k:"768p-6s",label:"768p · 6s",price:1.35,dur:6},{k:"768p-10s",label:"768p · 10s",price:2.25,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:2.31,dur:6}]},
+  {id:"hailuo-02",n:"hailuo-02",p:"Minimax",c:"CNY",unit:"fixed",variants:[{k:"512p-6s",label:"512p · 6s",price:0.6,dur:6},{k:"768p-6s",label:"768p · 6s",price:2.0,dur:6},{k:"768p-10s",label:"768p · 10s",price:4.0,dur:10},{k:"1080p-6s",label:"1080p · 6s",price:3.5,dur:6}]},
+  {id:"mgv-1",n:"veo-3.1-generate-preview",p:"Google",c:"USD",unit:"5s",variants:[{k:"std",label:"Std (720p/1080p)",ps:2.0},{k:"pro",label:"Pro (4K)",ps:3.0}]},
+  {id:"wan2.6-i2v",n:"wan2.6-i2v",p:"Qwen",c:"CNY",unit:"5s",variants:[{k:"std",label:"Std (720p)",ps:3.0},{k:"pro",label:"Pro (1080p)",ps:5.0}]},
+];
+let VS={sel:"kling-v3",vk:"pro-snd",count:10,secs:5};
+function vCalcOne(m,vk,secs){
+  const v=m.variants.find(x=>x.k===vk)||m.variants[0];
+  let price;
+  if(m.unit==="sec") price=v.ps*secs;
+  else if(m.unit==="5s") price=v.ps*Math.ceil(secs/5);
+  else price=v.price;
+  const effSecs=m.unit==="fixed"?v.dur:secs;
+  const priceC=m.c==="USD"?price*R:price;
+  const priceU=m.c==="USD"?price:price/R;
+  return{price,priceC,priceU,effSecs,v};
+}
+function vFmtC(c){return c>=10000?"\u00a5"+(c/10000).toFixed(2)+"\u4e07":c>=1?"\u00a5"+c.toFixed(2):"\u00a5"+c.toFixed(4);}
+function vFmtU(u){return u>=1000?"$"+(u/1000).toFixed(2)+"K":u>=1?"$"+u.toFixed(2):"$"+u.toFixed(4);}
+function rVList(){
+  const ps=["可灵AI","Minimax","Google","Qwen"];
+  document.getElementById("VM_LIST").innerHTML=ps.map(p=>{
+    const ms=VM.filter(m=>m.p===p);if(!ms.length)return"";
+    const pal=VPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
+    ms.map(m=>{
+      const on=m.id===VS.sel,style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
+      return`<div class="mrow${on?" on":""}"${style} onclick="vSelM('${m.id}')">
+        <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
+        <span class="mrow-name" style="font-size:12px">${m.n}</span>
+      </div>`;
+    }).join("")+"</div>";
+  }).join("");
+}
+function rVConfig(){
+  const m=VM.find(x=>x.id===VS.sel);
+  const pal=VPAL[m.p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+  document.getElementById("VM_VARIANTS").innerHTML=m.variants.map(v=>{
+    const on=v.k===VS.vk;
+    return`<button class="chip${on?" on":""}" style="${on?"background:"+pal.ch+";border-color:"+pal.a+";color:"+pal.a:""}" onclick="vSelVar('${v.k}')">${v.label}</button>`;
+  }).join(" ");
+  const isFixed=m.unit==="fixed";
+  const cv=m.variants.find(x=>x.k===VS.vk)||m.variants[0];
+  const dispSecs=isFixed?cv.dur:VS.secs;
+  document.getElementById("VS_I").value=dispSecs;
+  document.getElementById("VS_S").value=Math.min(dispSecs,120);
+  document.getElementById("VS_D").textContent=dispSecs+"s";
+  document.getElementById("VS_I").disabled=isFixed;
+  document.getElementById("VS_S").disabled=isFixed;
+  document.getElementById("VS_I").style.opacity=isFixed?"0.4":"1";
+  document.getElementById("VS_S").style.opacity=isFixed?"0.4":"1";
+}
+function rVCards(){
+  const m=VM.find(x=>x.id===VS.sel);
+  const isFixed=m.unit==="fixed";
+  const cv=m.variants.find(x=>x.k===VS.vk)||m.variants[0];
+  const effSecs=isFixed?cv.dur:VS.secs;
+  const{priceC,priceU}=vCalcOne(m,VS.vk,effSecs);
+  const totalC=priceC*VS.count,totalU=priceU*VS.count;
+  const perSecC=priceC/effSecs,perSecU=priceU/effSecs;
+  const cards=[
+    {icon:"🎬",label:"单条成本",sub:m.n+" · "+effSecs+"s",vc:priceC,vu:priceU,ca:"#6c63ff"},
+    {icon:"📦",label:"总成本",sub:"× "+VS.count+" 条",vc:totalC,vu:totalU,ca:"#1de9b6"},
+    {icon:"⏱",label:"每秒成本",sub:"平均单秒价格",vc:perSecC,vu:perSecU,ca:"#ffc400"},
+  ];
+  document.getElementById("VC_CARDS").innerHTML=cards.map(cd=>`<div class="cc" style="--ca:${cd.ca}">
+    <div class="cct"><div><div class="ccl">${cd.label}</div><div class="ccs">${cd.sub}</div></div><div class="cci">${cd.icon}</div></div>
+    <div class="ccm">${vFmtC(cd.vc)}</div><div class="cca">${vFmtU(cd.vu)}</div></div>`).join("");
+}
+function rVTable(){
+  const curM=VM.find(x=>x.id===VS.sel);
+  const isFixed=curM.unit==="fixed";
+  const cv=curM.variants.find(x=>x.k===VS.vk)||curM.variants[0];
+  const effSecs=isFixed?cv.dur:VS.secs;
+  document.getElementById("VT_BODY").innerHTML=VM.map(m=>{
+    const pal=VPAL[m.p]||{a:"#888"};
+    const prices=m.variants.map(v=>{
+      const s=m.unit==="USD"?R:1;
+      if(m.unit==="fixed") return v.price*(m.c==="USD"?R:1);
+      if(m.unit==="sec") return v.ps*effSecs*(m.c==="USD"?R:1);
+      return v.ps*Math.ceil(effSecs/5)*(m.c==="USD"?R:1);
+    });
+    const minP=Math.min(...prices),maxP=Math.max(...prices);
+    const{priceC}=vCalcOne(m,VS.vk,effSecs);
+    const cur=m.id===VS.sel;
+    const unitLabel=m.unit==="sec"?"元/秒":m.unit==="5s"?"元/5s":"固定价";
+    return`<tr class="${cur?"hi":""}" onclick="vSelM('${m.id}')">
+      <td><div class="tdm"><div class="mdot" style="background:${pal.a}"></div>
+        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${m.n}</span></div></td>
+      <td style="color:var(--t3);font-size:11px">${m.p}</td>
+      <td style="color:var(--t3);font-size:11px">${unitLabel}</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3)">${vFmtC(minP)}</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3)">${vFmtC(maxP)}</td>
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${vFmtC(priceC)}</td></tr>`;
+  }).join("");
+}
+function vRender(){rVList();rVConfig();rVCards();rVTable();}
+function vSelM(id){VS.sel=id;const m=VM.find(x=>x.id===id);VS.vk=m.variants[0].k;vRender();}
+function vSelVar(k){VS.vk=k;vRender();}
+function vUpd(){
+  const ni=parseInt(document.getElementById("VN_I").value)||10;
+  const si=parseInt(document.getElementById("VS_I").value)||5;
+  VS.count=Math.max(1,Math.min(10000,ni));
+  VS.secs=Math.max(1,Math.min(120,si));
+  document.getElementById("VN_S").value=VS.count;
+  document.getElementById("VS_S").value=VS.secs;
+  document.getElementById("VN_D").textContent=VS.count;
+  document.getElementById("VS_D").textContent=VS.secs+"s";
+  vRender();
+}
+function setTab(t){
+  document.getElementById("TAB_TEXT_WRAP").style.display=t==="text"?"":"none";
+  document.getElementById("TAB_VIDEO_WRAP").style.display=t==="video"?"":"none";
+  document.getElementById("NR_TEXT").style.display=t==="text"?"flex":"none";
+  document.querySelectorAll("#MAINTABT button").forEach(b=>{b.className=b.id==="TAB_BTN_"+t.toUpperCase()?"on":"";});
+  if(t==="video") vRender();
+}
 render();
 </script></body></html>
