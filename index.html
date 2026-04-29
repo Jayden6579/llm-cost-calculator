@@ -106,9 +106,13 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   <div class="nl">$</div>
   <span class="nt">LLM Cost Calculator</span>
   <span class="ns">· AI 大模型成本分析</span>
-  <div class="tog" id="MAINTABT" style="margin-left:16px">
-    <button class="on" onclick="setTab('text')" id="TAB_BTN_TEXT">📊 文本模型</button>
-    <button onclick="setTab('video')" id="TAB_BTN_VIDEO">🎬 视频/图片</button>
+  <div id="MAINTABT" class="tog" style="margin-left:12px;display:flex;gap:2px">
+    <button class="on" id="TAB_BTN_TEXT" onclick="setTab('text')">📊 文本</button>
+    <button id="TAB_BTN_EMBED" onclick="setTab('embed')">🔍 Embedding</button>
+    <button id="TAB_BTN_VISION" onclick="setTab('vision')">👁 视觉</button>
+    <button id="TAB_BTN_VIDEO" onclick="setTab('video')">🎬 视频</button>
+    <button id="TAB_BTN_IMAGE" onclick="setTab('image')">🖼 图片</button>
+    <button id="TAB_BTN_SPEECH" onclick="setTab('speech')">🔊 语音</button>
   </div>
   <div class="nr" id="NR_TEXT">
     <div class="tog" id="VT" style="padding:2px;gap:1px">
@@ -211,6 +215,122 @@ tr:hover td{background:rgba(108,99,255,.04)}tr.hi td{background:rgba(108,99,255,
   </div>
   <div class="foot">视频/图片价格仅供参考，以各平台官方最新定价为准</div>
 </div></div><!-- end TAB_VIDEO_WRAP -->
+
+<!-- EMBED TAB -->
+<div id="TAB_EMBED_WRAP" style="display:none"><div class="pg">
+  <div class="sec">
+    <div class="card">
+      <div class="ch">Embedding & Rerank 模型</div>
+      <p style="color:var(--t3);font-size:12px;margin-bottom:16px">按 Token 数量计费，适用于向量化和排序场景</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div>
+          <div class="ph"><span class="pl">Token 数量（百万）</span><span class="pv" id="ET_D" style="color:#6c63ff">1</span></div>
+          <div class="pi"><input type="text" id="ET_I" value="1" style="--tc:#6c63ff" oninput="eUpd()" onchange="eUpd()"><span class="pu">M tokens</span></div>
+          <input type="range" id="ET_S" min="0.001" max="100" step="0.001" value="1" style="--tc:#6c63ff" oninput="eUpd()">
+          <div class="rl"><span>1K</span><span>10K</span><span>1M</span><span>100M</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tw sec">
+    <div class="twh"><span class="twt">Embedding & Rerank 定价</span></div>
+    <table><thead><tr>
+      <th>模型</th><th>供应商</th><th>类型</th><th class="r">单价</th><th class="r">估算成本</th>
+    </tr></thead><tbody id="ET_BODY"></tbody></table>
+  </div>
+  <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
+</div></div>
+
+<!-- VISION TAB -->
+<div id="TAB_VISION_WRAP" style="display:none"><div class="pg">
+  <div class="sec" style="display:grid;grid-template-columns:220px 1fr;gap:13px">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:10px 14px 8px;border-bottom:1px solid var(--b1)"><div class="ch" style="margin-bottom:0">视觉理解模型</div></div>
+      <div style="overflow-y:auto;max-height:500px;padding:8px" id="VIS_LIST"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:13px">
+        <div class="ch">用量估算</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+          <div>
+            <div class="ph"><span class="pl">输入 Tokens（百万）</span><span class="pv" id="VI_D" style="color:#6c63ff">1</span></div>
+            <div class="pi"><input type="text" id="VI_I" value="1" style="--tc:#6c63ff" oninput="visUpd()" onchange="visUpd()"><span class="pu">M</span></div>
+            <input type="range" id="VI_S" min="0.001" max="100" step="0.001" value="1" style="--tc:#6c63ff" oninput="visUpd()">
+            <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>100M</span></div>
+          </div>
+          <div>
+            <div class="ph"><span class="pl">输出 Tokens（百万）</span><span class="pv" id="VO_D" style="color:#1de9b6">0.2</span></div>
+            <div class="pi"><input type="text" id="VO_I" value="0.2" style="--tc:#1de9b6" oninput="visUpd()" onchange="visUpd()"><span class="pu">M</span></div>
+            <input type="range" id="VO_S" min="0.001" max="100" step="0.001" value="0.2" style="--tc:#1de9b6" oninput="visUpd()">
+            <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>100M</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="VIS_CARDS"></div>
+    </div>
+  </div>
+  <div class="tw sec">
+    <div class="twh"><span class="twt">视觉理解模型价格对比</span></div>
+    <table><thead><tr>
+      <th>模型</th><th>供应商</th><th class="r">输入价</th><th class="r">输出价</th><th class="r">估算总成本</th>
+    </tr></thead><tbody id="VIS_BODY"></tbody></table>
+  </div>
+  <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
+</div></div>
+
+<!-- IMAGE TAB -->
+<div id="TAB_IMAGE_WRAP" style="display:none"><div class="pg">
+  <div class="sec" style="display:grid;grid-template-columns:210px 1fr;gap:13px">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:10px 14px 8px;border-bottom:1px solid var(--b1)"><div class="ch" style="margin-bottom:0">图片生成模型</div></div>
+      <div style="overflow-y:auto;max-height:500px;padding:8px" id="IM_LIST"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:13px">
+        <div class="ch">规格选择</div>
+        <div id="IM_VARIANTS" class="chips" style="margin-bottom:16px"></div>
+        <div>
+          <div class="ph"><span class="pl">图片数量</span><span class="pv" id="IN_D" style="color:#6c63ff">100</span></div>
+          <div class="pi"><input type="text" id="IN_I" value="100" style="--tc:#6c63ff" oninput="imgUpd()" onchange="imgUpd()"><span class="pu">张</span></div>
+          <input type="range" id="IN_S" min="1" max="100000" step="1" value="100" style="--tc:#6c63ff" oninput="imgUpd()">
+          <div class="rl"><span>1</span><span>100</span><span>1K</span><span>10K</span></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px" id="IC_CARDS"></div>
+    </div>
+  </div>
+  <div class="tw sec">
+    <div class="twh"><span class="twt">图片模型价格对比</span></div>
+    <table><thead><tr>
+      <th>模型</th><th>供应商</th><th>规格</th><th class="r">单价/张</th><th class="r">当前成本</th>
+    </tr></thead><tbody id="IT_BODY"></tbody></table>
+  </div>
+  <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
+</div></div>
+
+<!-- SPEECH TAB -->
+<div id="TAB_SPEECH_WRAP" style="display:none"><div class="pg">
+  <div class="sec">
+    <div class="card">
+      <div class="ch">语音生成模型</div>
+      <p style="color:var(--t3);font-size:12px;margin-bottom:16px">按字符数量计费（ElevenLabs，USD计价）</p>
+      <div>
+        <div class="ph"><span class="pl">字符数量（千字）</span><span class="pv" id="SP_D" style="color:#6c63ff">10</span></div>
+        <div class="pi"><input type="text" id="SP_I" value="10" style="--tc:#6c63ff" oninput="spUpd()" onchange="spUpd()"><span class="pu">K chars</span></div>
+        <input type="range" id="SP_S" min="1" max="10000" step="1" value="10" style="--tc:#6c63ff" oninput="spUpd()">
+        <div class="rl"><span>1K</span><span>100K</span><span>1M</span><span>10M</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="tw sec">
+    <div class="twh"><span class="twt">语音生成模型定价</span></div>
+    <table><thead><tr>
+      <th>模型</th><th>供应商</th><th class="r">单价</th><th class="r">估算成本</th>
+    </tr></thead><tbody id="SP_BODY"></tbody></table>
+  </div>
+  <div class="foot">价格仅供参考，以各平台官方最新定价为准</div>
+</div></div>
+
 <script>
 const R=7.25,DB=1e10;
 const PAL={
@@ -611,12 +731,212 @@ function vUpd(){
   document.getElementById("VS_D").textContent=VS.secs+"s";
   vRender();
 }
+const ALL_TABS=["text","embed","vision","video","image","speech"];
 function setTab(t){
-  document.getElementById("TAB_TEXT_WRAP").style.display=t==="text"?"":"none";
-  document.getElementById("TAB_VIDEO_WRAP").style.display=t==="video"?"":"none";
+  ALL_TABS.forEach(id=>{
+    const w=document.getElementById("TAB_"+id.toUpperCase()+"_WRAP");
+    if(w) w.style.display=t===id?"":"none";
+  });
   document.getElementById("NR_TEXT").style.display=t==="text"?"flex":"none";
   document.querySelectorAll("#MAINTABT button").forEach(b=>{b.className=b.id==="TAB_BTN_"+t.toUpperCase()?"on":"";});
   if(t==="video") vRender();
+  if(t==="embed") eRender();
+  if(t==="vision") visRender();
+  if(t==="image") imgRender();
+  if(t==="speech") spRender();
 }
+
+// ===== Embedding & Rerank =====
+const EM=[
+  {id:"qwen3-embedding-8b",n:"qwen3-embedding-8b",p:"Qwen",c:"CNY",type:"Embedding",unit:"M",price:0.5},
+  {id:"qwen3-reranker-8b",n:"qwen3-reranker-8b",p:"Qwen",c:"CNY",type:"Rerank",unit:"K",price:0.5},
+  {id:"moe-1",n:"text-embedding-3-small",p:"OpenAI",c:"USD",type:"Embedding",unit:"M",price:0.02},
+];
+let ES={tokens:1};
+function eUpd(){
+  ES.tokens=Math.max(0.001,parseFloat(document.getElementById("ET_I").value)||1);
+  document.getElementById("ET_S").value=Math.min(ES.tokens,100);
+  document.getElementById("ET_D").textContent=ES.tokens+"M";
+  eRender();
+}
+function eRender(){
+  if(!document.getElementById("ET_BODY")) return;
+  document.getElementById("ET_BODY").innerHTML=EM.map(m=>{
+    let cost;
+    if(m.unit==="M") cost=m.price*ES.tokens*(m.c==="USD"?R:1);
+    else cost=m.price*ES.tokens*1000*(m.c==="USD"?R:1);
+    return`<tr>
+      <td>${m.n}</td>
+      <td style="color:var(--t3);font-size:11px">${m.p}</td>
+      <td><span style="font-size:10px;padding:2px 6px;border-radius:3px;background:var(--b2);color:var(--t3)">${m.type}</span></td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">${m.c==="USD"?"$"+m.price+"/M tok":"¥"+m.price+"/"+m.unit+" tok"}</td>
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">¥${cost>=1?cost.toFixed(2):cost.toFixed(4)}</td>
+    </tr>`;
+  }).join("");
+}
+
+// ===== 视觉理解 =====
+const VISPAL={Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},"腾讯":{a:"#0099ff",bg:"rgba(0,153,255,.08)",ch:"rgba(0,153,255,.16)"}};
+const VIM=[
+  {id:"qwen3-vl-plus",n:"qwen3-vl-plus",p:"Qwen",c:"CNY",i:1,o:6},
+  {id:"qwen3-vl-235b-instruct",n:"qwen3-vl-235b-a22b-instruct",p:"Qwen",c:"CNY",i:2,o:8},
+  {id:"qwen3-vl-235b-thinking",n:"qwen3-vl-235b-a22b-thinking",p:"Qwen",c:"CNY",i:2,o:20},
+  {id:"qwen3-vl-30b",n:"qwen3-vl-30b-a3b-instruct",p:"Qwen",c:"CNY",i:0.75,o:3},
+  {id:"qwen3-vl-flash",n:"qwen3-vl-flash",p:"Qwen",c:"CNY",i:0.15,o:1.5},
+  {id:"hunyuan-t1-vision",n:"hunyuan-t1-vision-20250916",p:"腾讯",c:"CNY",i:3,o:9},
+  {id:"hunyuan-vision-1.5",n:"hunyuan-vision-1.5-instruct",p:"腾讯",c:"CNY",i:3,o:9},
+];
+let VISS={sel:"qwen3-vl-plus",inM:1,outM:0.2};
+function visUpd(){
+  VISS.inM=Math.max(0.001,parseFloat(document.getElementById("VI_I").value)||1);
+  VISS.outM=Math.max(0.001,parseFloat(document.getElementById("VO_I").value)||0.2);
+  document.getElementById("VI_D").textContent=VISS.inM+"M";
+  document.getElementById("VO_D").textContent=VISS.outM+"M";
+  visRender();
+}
+function visRender(){
+  if(!document.getElementById("VIS_LIST")) return;
+  const ps=["Qwen","腾讯"];
+  document.getElementById("VIS_LIST").innerHTML=ps.map(p=>{
+    const ms=VIM.filter(m=>m.p===p);if(!ms.length)return"";
+    const pal=VISPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
+    ms.map(m=>{
+      const on=m.id===VISS.sel,style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
+      return`<div class="mrow${on?" on":""}"${style} onclick="visSel('${m.id}')">
+        <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
+        <span class="mrow-name" style="font-size:12px">${m.n}</span></div>`;
+    }).join("")+"</div>";
+  }).join("");
+  const m=VIM.find(x=>x.id===VISS.sel);
+  const pal=VISPAL[m.p]||{a:"#888"};
+  const ic=m.i*VISS.inM*(m.c==="USD"?R:1);
+  const oc=m.o*VISS.outM*(m.c==="USD"?R:1);
+  const tc=ic+oc;
+  const fmt=v=>v>=10000?"¥"+(v/10000).toFixed(2)+"万":v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
+  document.getElementById("VIS_CARDS").innerHTML=[
+    {icon:"📥",label:"输入成本",sub:VISS.inM+"M tokens",v:ic,ca:"#6c63ff"},
+    {icon:"📤",label:"输出成本",sub:VISS.outM+"M tokens",v:oc,ca:"#1de9b6"},
+    {icon:"💰",label:"总成本",sub:m.n,v:tc,ca:"#ffc400"},
+  ].map(cd=>`<div class="cc" style="--ca:${cd.ca}">
+    <div class="cct"><div><div class="ccl">${cd.label}</div><div class="ccs">${cd.sub}</div></div><div class="cci">${cd.icon}</div></div>
+    <div class="ccm">${fmt(cd.v)}</div></div>`).join("");
+  document.getElementById("VIS_BODY").innerHTML=VIM.map(m=>{
+    const pal=VISPAL[m.p]||{a:"#888"};
+    const ic=m.i*VISS.inM*(m.c==="USD"?R:1);
+    const oc=m.o*VISS.outM*(m.c==="USD"?R:1);
+    const tc=ic+oc;
+    const cur=m.id===VISS.sel;
+    const fmt=v=>v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
+    return`<tr class="${cur?"hi":""}" onclick="visSel('${m.id}')">
+      <td><div class="tdm"><div class="mdot" style="background:${pal.a}"></div>
+        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${m.n}</span></div></td>
+      <td style="color:var(--t3);font-size:11px">${m.p}</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">¥${m.i}/M</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">¥${m.o}/M</td>
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(tc)}</td></tr>`;
+  }).join("");
+}
+function visSel(id){VISS.sel=id;visRender();}
+
+// ===== 图片生成 =====
+const IMPAL={"可灵AI":{a:"#ff6b35",bg:"rgba(255,107,53,.08)",ch:"rgba(255,107,53,.16)"},Qwen:{a:"#7951f0",bg:"rgba(121,81,240,.08)",ch:"rgba(121,81,240,.16)"},"豆包":{a:"#00bcd4",bg:"rgba(0,188,212,.08)",ch:"rgba(0,188,212,.16)"},Google:{a:"#4285f4",bg:"rgba(66,133,244,.08)",ch:"rgba(66,133,244,.16)"}};
+const IM=[
+  {id:"kling-v3-img",n:"kling-v3",p:"可灵AI",c:"CNY",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.3},{k:"4k",label:"4k 规格",price:0.6}]},
+  {id:"kling-v3-omni-img",n:"kling-v3-omni",p:"可灵AI",c:"CNY",variants:[{k:"1k2k",label:"1k/2k 规格",price:0.2},{k:"4k",label:"4k 规格",price:0.4}]},
+  {id:"wan2.6-t2i",n:"wan2.6-t2i",p:"Qwen",c:"CNY",variants:[{k:"std",label:"文生图",price:0.2}]},
+  {id:"doubao-seedream-4.5",n:"doubao-seedream-4.5",p:"豆包",c:"CNY",variants:[{k:"t2i",label:"文生图",price:0.25},{k:"i2i",label:"图生图",price:0.25}]},
+  {id:"mgg-9",n:"gemini-3.1-flash-image",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.5}]},
+  {id:"mgg-5",n:"gemini-2.5-flash-image",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.3}]},
+  {id:"mgg-6",n:"gemini-3-pro-image",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:2.0}]},
+  {id:"mgg-9-global",n:"gemini-3.1-flash-image (国际)",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.5}]},
+  {id:"mgg-5-global",n:"gemini-2.5-flash-image (国际)",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:0.3}]},
+  {id:"mgg-6-global",n:"gemini-3-pro-image (国际)",p:"Google",c:"USD",variants:[{k:"std",label:"标准",price:2.0}]},
+];
+let IS={sel:"kling-v3-img",vk:"1k2k",count:100};
+function imgUpd(){
+  IS.count=Math.max(1,parseInt(document.getElementById("IN_I").value)||100);
+  document.getElementById("IN_S").value=Math.min(IS.count,100000);
+  document.getElementById("IN_D").textContent=IS.count;
+  imgRender();
+}
+function imgSelM(id){IS.sel=id;const m=IM.find(x=>x.id===id);IS.vk=m.variants[0].k;imgRender();}
+function imgSelVar(k){IS.vk=k;imgRender();}
+function imgRender(){
+  if(!document.getElementById("IM_LIST")) return;
+  const ps=["可灵AI","Qwen","豆包","Google"];
+  document.getElementById("IM_LIST").innerHTML=ps.map(p=>{
+    const ms=IM.filter(m=>m.p===p);if(!ms.length)return"";
+    const pal=IMPAL[p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+    return`<div style="margin-bottom:4px"><div style="font-size:9px;font-weight:700;color:${pal.a};letter-spacing:.8px;text-transform:uppercase;padding:4px 8px 2px">${p}</div>`+
+    ms.map(m=>{
+      const on=m.id===IS.sel,style=on?` style="--mc:${pal.a};--mb:${pal.ch}"`:"";
+      return`<div class="mrow${on?" on":""}"${style} onclick="imgSelM('${m.id}')">
+        <span style="width:6px;height:6px;border-radius:50%;background:${pal.a};flex-shrink:0;display:inline-block"></span>
+        <span class="mrow-name" style="font-size:12px">${m.n}</span></div>`;
+    }).join("")+"</div>";
+  }).join("");
+  const m=IM.find(x=>x.id===IS.sel);
+  const pal=IMPAL[m.p]||{a:"#888",ch:"rgba(136,136,136,.16)"};
+  document.getElementById("IM_VARIANTS").innerHTML=m.variants.map(v=>{
+    const on=v.k===IS.vk;
+    return`<button class="chip${on?" on":""}" style="${on?"background:"+pal.ch+";border-color:"+pal.a+";color:"+pal.a:""}" onclick="imgSelVar('${v.k}')">${v.label}</button>`;
+  }).join(" ");
+  const cv=m.variants.find(v=>v.k===IS.vk)||m.variants[0];
+  const unitPrice=m.c==="USD"?cv.price*R:cv.price;
+  const totalC=unitPrice*IS.count;
+  const fmt=v=>v>=10000?"¥"+(v/10000).toFixed(2)+"万":v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
+  document.getElementById("IC_CARDS").innerHTML=[
+    {icon:"🖼",label:"单张成本",sub:m.n+" · "+cv.label,v:unitPrice,ca:"#6c63ff"},
+    {icon:"📦",label:"总成本",sub:"× "+IS.count+" 张",v:totalC,ca:"#1de9b6"},
+    {icon:"💰",label:"千张成本",sub:"批量参考价",v:unitPrice*1000,ca:"#ffc400"},
+  ].map(cd=>`<div class="cc" style="--ca:${cd.ca}">
+    <div class="cct"><div><div class="ccl">${cd.label}</div><div class="ccs">${cd.sub}</div></div><div class="cci">${cd.icon}</div></div>
+    <div class="ccm">${fmt(cd.v)}</div></div>`).join("");
+  document.getElementById("IT_BODY").innerHTML=IM.map(m=>{
+    const pal=IMPAL[m.p]||{a:"#888"};
+    const cur=m.id===IS.sel;
+    const cv=m.variants.find(v=>v.k===IS.vk)||m.variants[0];
+    const unitPrice=m.c==="USD"?cv.price*R:cv.price;
+    const totalC=unitPrice*IS.count;
+    const fmt=v=>v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
+    const priceLabel=m.c==="USD"?"$"+cv.price+"":"¥"+cv.price;
+    return`<tr class="${cur?"hi":""}" onclick="imgSelM('${m.id}')">
+      <td><div class="tdm"><div class="mdot" style="background:${pal.a}"></div>
+        <span style="color:${cur?pal.a:"var(--t2)"};font-weight:${cur?700:400}">${m.n}</span></div></td>
+      <td style="color:var(--t3);font-size:11px">${m.p}</td>
+      <td style="color:var(--t3);font-size:11px">${cv.label}</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">${priceLabel}</td>
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(totalC)}</td></tr>`;
+  }).join("");
+}
+
+// ===== 语音生成 =====
+const SM=[
+  {id:"eleven-flash-v2",n:"eleven-flash-v2",p:"ElevenLabs",c:"USD",price:0.06},
+  {id:"eleven-flash-v2.5",n:"eleven-flash-v2.5",p:"ElevenLabs",c:"USD",price:0.06},
+  {id:"eleven-v3",n:"eleven-v3",p:"ElevenLabs",c:"USD",price:0.12},
+];
+let SPS={chars:10};
+function spUpd(){
+  SPS.chars=Math.max(1,parseFloat(document.getElementById("SP_I").value)||10);
+  document.getElementById("SP_S").value=Math.min(SPS.chars,10000);
+  document.getElementById("SP_D").textContent=SPS.chars+"K";
+  spRender();
+}
+function spRender(){
+  if(!document.getElementById("SP_BODY")) return;
+  document.getElementById("SP_BODY").innerHTML=SM.map(m=>{
+    const cost=m.price*SPS.chars*R;
+    const fmt=v=>v>=1?"¥"+v.toFixed(2):"¥"+v.toFixed(4);
+    return`<tr>
+      <td>${m.n}</td>
+      <td style="color:var(--t3);font-size:11px">${m.p}</td>
+      <td class="tdr" style="font-family:var(--mono);color:var(--t3);font-size:11px">$${m.price}/千字</td>
+      <td class="tdr" style="font-family:var(--mono);font-weight:700">${fmt(cost)}</td>
+    </tr>`;
+  }).join("");
+}
+
 render();
 </script></body></html>
